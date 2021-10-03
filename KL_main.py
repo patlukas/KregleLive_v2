@@ -456,31 +456,89 @@ class MatchImgToSign:
 class LookingForPlayerTables:
     """
     Biblioteki:
+        import numpy as np
+        import cv2
         from skimage.filters import threshold_local
+    Funkcje globalne:
+        get_all_option_sequence_columns() - zwraca listę z możliwymi do wyboru rodzajami sekwencji kolumn
+            return: (lsit) lista zawierająca listy intów z możliwymi sekwencjami kolumn
+
+        get_list_all_row_data_in_img() - funkcja zwraca listę ze szczegółami dotyczącymi wszystkich komórek na obrazie
+            return: (list) lista z obiektami __CellInRow, każdy obiekt zawiera metody:
+                            - get_coord_y() - zwraca współrzędną górną i dolną wiersza
+                            - get_list_coord_x() - zwraca listę zawierającą listy ze współrzędnymi lewą i prawą
+                            - get_coord_x(index) - zwraca współrzędne lewą i prawą kolumny o indeksie "index"
+
+        get_list_row_data() - funkcja zwraca listę ze szczegółami dotyczącymi komórek na obrazie
+                                które spełniają wymagania sekwencji
+            return: (list) lista z obiektami __CellInRow, każdy obiekt zawiera metody:
+                            - get_coord_y() - zwraca współrzędną górną i dolną wiersza
+                            - get_list_coord_x() - zwraca listę zawierającą listy ze współrzędnymi lewą i prawą
+                            - get_coord_x(index) - zwraca współrzędne lewą i prawą kolumny o indeksie "index"
+
+        set_sequence_columns(sequence_columns) - funckja służy do zmienienia self.__sequence_columns, funkcja ustawia
+                                                w self.__sequence_columns wartość przekazaną sequence_columns
+
+        get_row_data(img_frame) - program przeszukuje przekazany obraz w poszukiwaniu wszystkich dostępnych komórek,
+                                  które zapisuje w self.__list_all_row_data_in_img, natomiast w self.__list_row_data
+                                  zapisuje te komórki, które spełniają założenia self.__sequence_columns
+            return: (list) lista z obiektami __CellInRow zawiera informacje o komórkach które spełniają warunki
+                           dotyczące szerkości komórek, każdy obiekt zawiera metody:
+                            - get_coord_y() - zwraca współrzędną górną i dolną wiersza
+                            - get_list_coord_x() - zwraca listę zawierającą listy ze współrzędnymi lewą i prawą
+                            - get_coord_x(index) - zwraca współrzędne lewą i prawą kolumny o indeksie "index"
     """
     def __init__(self):
+        """
+        Funkcja inicjuje klasę, tworzy zmienne w obiekcie:
+            :param self.__MAX_SPACE_BETWEEN_COLUMN: (int) maksymalna odległość między wykrytymi komórkami, ta wartość
+                                                          jest używana przy sprawdzaniu sekwencji w funkcji
+                                                          self.__finding_sequence
+            :param self.__THRESHOLD_HORIZONTAL: (int) średnia wartość jaka musi być w wierszu aby uznać ten wiersz
+                                                      za koniec/początek wiersza
+            :param self.__THRESHOLD_VERTICAL: (int) średnia wartość jaka musi być w kolumnie aby uznać tą kolumnę
+                                                    za koniec/początek kolumny w wierszu
+            :param self.__MIN_WIDTH: (int) minimalna szerokość jaką musi mieć komórka aby dodać ją do listy
+            :param self.__MIN_HEIGHT: (int) minimalna wysokość jaką musi mieć wiersz aby dodać go do listy
+            :param self.__sequence_columns: (list) lista sekwencji szerokości kolumn w wierszu, zawiera liczby całkowite
+                                                   zaczynając od 0, liczba 0 oznacza że kolumna jest najwęższa, a
+                                                   każdy element o tym samym numerze musi mieć zbliżoną szerokość
+                                                   i mieć mniejszą/większą szerokość niż
+                                                   kolumna o numerze mniejszym/więkzym
+            :param self.__list_all_row_data_in_img: (list)lista obiektów __CellInRow zawiera wszyskie wykryte komórki
+            :param self.__list_row_data: (list) lista obiektów __CellInRow zawiera komórki spełniające warunki sekwencji
+        """
         self.__MAX_SPACE_BETWEEN_COLUMN = 8
         self.__THRESHOLD_HORIZONTAL = 150
         self.__THRESHOLD_VERTICAL = 20
-        self.__MIN_WIDTH = 25
+        self.__MIN_WIDTH = 15
         self.__MIN_HEIGHT = 10
-        self.__sequence_columns = [0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        self.__sequence_columns = [0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         self.__list_all_row_data_in_img = []
         self.__list_row_data = []
 
     class __CellInRow:
         """
-        Klasa do przechowywania współrzędnych y0 y1 wiersza
-        oraz tablicy obiektów z współrzędnymi x0 x1
+        Klasa służy do przechowywania informacji o współrzędnych wierszy jakie zosatły wykryte
+        oraz o komórkach w tym wierszu
 
-        :param coord_y: (array) tablica przechowująca pod 0 indeksem y0, a pod 1 y1
-        :param array_coord_x: (array) tablica przechowuje tablice, w których pod 0 indeksem jest x0, a pod 1 x1
+        Funkcje globalne:
+            get_coord_y() - zwraca górną i dolną współrzędną wiersza
+            get_list_coord_x() - zwraca listę, w której każdy eleement odpowiada jednej komórce w wierszu
+                                 i zawiera prawą i lewą współrzędną
+            get_coord_x(index) - zwraca prawą i lewą współrzędną komórki o indeksie "index"
+                                 lub False gdy index jest zbyt duży
         """
 
         def __init__(self, coord_y, array_coord_x):
             """
-            :param coord_y: (array) pod indeksem 0 przechowuje y0, a pod indeksem 1 przechowuje y1
-            :param array_coord_x: (array) tablica przechowuje tablice, w których pod 0 indeksem jest x0, a pod 1 x1
+            Funkcja inicjuje klasę, tworzy zmienne w obiekcie:
+                self.__coord_y: (list) lista dwóch liczb całkowitych określającą górną i dolną granicę wiersza
+                self.__array_coord_x: (list) lista list dwóch liczb całkowitych określającą lewą i prawą
+                                              granicę komórki w wierszu
+
+            :param coord_y: (list) pod indeksem 0 przechowuje y0, a pod indeksem 1 przechowuje y1
+            :param array_coord_x: (list) tablica przechowuje tablice, w których pod 0 indeksem jest x0, a pod 1 x1
             """
             self.__coord_y = coord_y
             self.__array_coord_x = array_coord_x
@@ -490,32 +548,70 @@ class LookingForPlayerTables:
             return self.__coord_y[0], self.__coord_y[1]
 
         def get_list_coord_x(self):
+            """
+            Funkcja zwraca listę, w której każdy eleement odpowiada jednej komórce w wierszu i zawiera
+            prawą i lewą współrzędną danej komórki
+            """
             return self.__array_coord_x
 
         def get_coord_x(self, index_coord_x):
             """
             Funkcja zwraca x0, x1 z kolumny o indeksie 'index_coord_x'
             :param index_coord_x: (int) indeks kolumny
-            :return: zwraca x0 x1
+            :return: (list/False) zwraca x0 x1 lub False jeżeli jest podany za duży index
             """
+            if index_coord_x >= len(self.__array_coord_x):
+                return False
             return self.__array_coord_x[index_coord_x][0], self.__array_coord_x[index_coord_x][1]
 
     @staticmethod
     def get_all_option_sequence_columns():
+        """Funkcja zwraca listę z możliwymi sekqencji kolumn do wyboru"""
         return [
             [0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ]
 
     def get_list_all_row_data_in_img(self):
+        """
+        funkcja zwraca listę ze szczegółami dotyczącymi wszystkich komórek na obrazie
+        return: (list) lista z obiektami __CellInRow, każdy obiekt zawiera metody:
+                        - get_coord_y() - zwraca współrzędną górną i dolną wiersza
+                        - get_list_coord_x() - zwraca listę zawierającą listy ze współrzędnymi lewą i prawą
+                        - get_coord_x(index) - zwraca współrzędne lewą i prawą kolumny o indeksie "index"
+        """
         return self.__list_all_row_data_in_img
 
     def get_list_row_data(self):
+        """
+        Funkcja zwraca listę ze szczegółami dotyczącymi komórek na obrazie które spełniają wymagania sekwencji
+        return: (list) lista z obiektami __CellInRow, każdy obiekt zawiera metody:
+                        - get_coord_y() - zwraca współrzędną górną i dolną wiersza
+                        - get_list_coord_x() - zwraca listę zawierającą listy ze współrzędnymi lewą i prawą
+                        - get_coord_x(index) - zwraca współrzędne lewą i prawą kolumny o indeksie "index"
+        """
         return self.__list_row_data
 
     def set_sequence_columns(self, sequence_columns):
+        """
+        funckja służy do zmienienia self.__sequence_columns, funkcja ustawia w self.__sequence_columns
+        na wartość przekazaną sequence_columns
+        """
         self.__sequence_columns = sequence_columns
 
     def get_row_data(self, img_frame):
+        """
+        Funkcja przeszukuje przekazany obraz w poszukiwaniu wszystkich dostępnych komórek, które zapisuje
+        w self.__list_all_row_data_in_img, natomiast w self.__list_row_data zapisuje te komórki, które spełniają
+        założenia self.__sequence_columns
+
+        :params img_frame: (np.ndarray) kolorowy obraz z kamery
+
+        return: (list) lista z obiektami __CellInRow zawiera informacje o komórkach które spełniają warunki
+                       dotyczące szerkości komórek, każdy obiekt zawiera metody:
+                        - get_coord_y() - zwraca współrzędną górną i dolną wiersza
+                        - get_list_coord_x() - zwraca listę zawierającą listy ze współrzędnymi lewą i prawą
+                        - get_coord_x(index) - zwraca współrzędne lewą i prawą kolumny o indeksie "index"
+        """
         self.__list_all_row_data_in_img = []
         self.__list_row_data = []
         if type(img_frame) != np.ndarray:
@@ -537,22 +633,33 @@ class LookingForPlayerTables:
         return self.__list_row_data
 
     def __looking_for_row(self, img_frame_black):
+        """
+        Funkcja służy do pośredniczenia między wywołaniem w poszukiwaniu wierszy a self.__create_coord_array.
+
+        :param img_frame_black: (np.ndarray) czarno-biały obrazy z kamery
+        :return: (list) lista list dwuelementowych zawierających górne i dolne współrzędne znalezionych wierszy
+        """
         return self.__create_coord_array(img_frame_black, self.__MIN_HEIGHT,
                                          self.__THRESHOLD_HORIZONTAL, looking_row=True)
 
     def __looking_for_column(self, img_frame_black):
+        """
+        Funkcja służy do pośredniczenia między wywołaniem w poszukiwaniu komórek w wierszu  a self.__create_coord_array.
+
+        :param img_frame_black: (np.ndarray) czarno-biały obrazy z kamery
+        :return: (list) lista list dwuelementowych zawierających lewe i prawe współrzędne znalezionych komórek w wierszu
+        """
         return self.__create_coord_array(img_frame_black, self.__MIN_WIDTH,
                                          self.__THRESHOLD_VERTICAL, looking_row=False)
 
     @staticmethod
     def __to_black_image(img):
         """
-        Funkcja zamienia obraz na czarno-biały. Jeżeli obraz jest kolorowy (ma 3 wymiary) jest zamieniany na obraz szary,
+        Funkcja zamienia obraz na czarno-biały. Jeżeli obraz jest kolorowy (ma 3 wymiary) jest zamieniany na obraz szary
         jeżeli nie to odrazu jest zamieniany na czarno-biały
 
         :param img: (np.ndarray) kolorowy lub szary obraz obraz
         :return: (np.ndarray) zwraca czarno-biały obraz
-        :raises brakObrazu: (bool) False gdy nie przekazano zmiennej o typie np.ndarray
         """
         if len(img.shape) == 3:
             img = cv2.cvtColor(src=img, code=cv2.COLOR_BGR2GRAY)
@@ -564,10 +671,10 @@ class LookingForPlayerTables:
     def __create_coord_array(img, min_space, threshold, looking_row):
         """
         Funkcja ma za zadanie zwrócenie tablicy z współrzędnymi
-            - y0 y1 przy check_horizontal==True
-            - x0 x1 przy check_horizontal==False
+            - y0 y1 przy looking_row==True
+            - x0 x1 przy looking_row==False
 
-        Jeżeli checkHorizontal==False to obraz jest okręcany o 270 stopni,
+        Jeżeli looking_row==False to obraz jest okręcany o 270 stopni,
         aby pierwsza kolumna odpowiadała po przekształceniu pierwszemu wierszowi
 
         Tablica array_all_wsp przechowuje współrzędne wszystkich wierszy,
@@ -579,9 +686,9 @@ class LookingForPlayerTables:
         :param img: (np.ndarray) czarno-biały obraz
         :param threshold: (int) próg średniej, jeżeli średnia wartość przekroczy tą granicę
                                 to współrzędna jest zapisywana w tablicy do array_all_wsp
-        :param check_horizontal: (bool) zmienna określa czy sprawdzane są wiersze(True) czy kolumny(False)
+        :param looking_row: (bool) zmienna określa czy sprawdzane są wiersze(True) czy kolumny(False)
         :param min_space: (int) ta zmienna określa minimalną odległość między wsp0 a wsp1
-        :return: zwraca tablicę tablic, gdzie pod 0 indeksem jest początkowa współrzędna, pod indeksem 1 końcowa współrzędna
+        :return: zwraca tablicę tablic, gdzie pod 0 indeksem jest początkowa współrzędna, pod indeksem 1 końcowa
         """
         img = img.copy()
         if not looking_row:
@@ -617,9 +724,6 @@ class LookingForPlayerTables:
         Jeżeli nie udało się znaleźć to zwraca False
 
         :param array_coord_x: (array) tablica tablic [x0, x1]
-        :param list_sequence_columns: (array) tablica zawiera cyfry całkowite, kolejno od 0.
-                                    Mniejsza wartość oznacza węższą kolumnę. Między kolumnami o tej samej wartości
-                                    w tablicy sequenceColumns może się różnić o od *0.9 do *1.1
         :return: tablicę tablic [x0, x1], których współrzędne spełniają założenia sequence_columns
                  False jeżeli nie udało się znaleźć sekwencji
         """
@@ -663,11 +767,18 @@ t = []
 t1 = time.time()
 k = LookingForPlayerTables()
 t2 = time.time()
-s = cv2.imread("main/a.jpg")
+
+s = cv2.imread("main/b.png")
+s = cv2.resize(s, (1080, 720), interpolation=cv2.INTER_AREA)
+
 t3 = time.time()
-x = k.get_row_data(s)
+# xx = k.get_row_data(s)
 t4 = time.time()
 print(t2 - t1, t3 - t2, t4 - t3)
-x = k.get_list_all_row_data_in_img()
-for y in x:
-    print(y.get_coord_y(), "|", y.get_list_coord_x())
+xx = k.get_list_all_row_data_in_img()
+for y in xx:
+    yy0, yy1 = y.get_coord_y()
+    for xx0, xx1 in y.get_list_coord_x():
+        cv2.rectangle(s, (xx0, yy0), (xx1, yy1), (0, 0, 255), 1)
+cv2.imshow("L", s)
+cv2.waitKey(0)
