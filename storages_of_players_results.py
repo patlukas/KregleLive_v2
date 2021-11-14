@@ -1,6 +1,5 @@
 """Moduł służy do przechowywania danych, wyników graczy i drużyn"""
 
-import copy
 from typing import Union
 import numpy as np
 
@@ -12,21 +11,28 @@ class StorageOfAllPlayersScore:
     Klasa przechowuje wyniki wszystkich graczy oraz drużyn.
 
     on_data_initialization(int, int) -> None - tworzy nową strukturę obiektu, jest wywoływana przy tworzeniu obiektu
-
+    update_coord_cell(list[list[_CellInRow]]) -> None - aktualizuje współrzędne komórek na obrazie
+    calculate_league_points() -> bool - Funkcja zlicza punkty ligowe graczy i drużyn
+    teams - lista przechowująca wyniki graczy i drużyn
+    number_of_teams - ilość drużyn
+    number_of_players_in_team - ilość graczy w drużynie
     """
     def __init__(self, *, number_of_team: int = 1, number_of_player_in_team: int = 1) -> None:
         """
         :param number_of_team - ilość drużyn
         :param number_of_player_in_team - ilość graczy w drużynie
-
-        teams - lista przechowująca wyniki graczy i drużyn
-        number_of_teams - ilość drużyn
-        number_of_players_in_team - ilość graczy w drużynie
         """
         self.teams: list[_StorageOfAllTeamResults] = []
         self.number_of_teams: int = 0
         self.number_of_players_in_team: int = 0
         self.on_data_initialization(number_of_team, number_of_player_in_team)
+
+    def __repr__(self) -> str:
+        return f"""
+            {self.teams=}
+            {self.number_of_teams=}
+            {self.number_of_players_in_team=}
+        """
 
     def on_data_initialization(self, number_of_team: int, number_of_player_in_team: int) -> None:
         """
@@ -38,9 +44,9 @@ class StorageOfAllPlayersScore:
         """
         self.number_of_teams = number_of_team
         self.number_of_players_in_team = number_of_player_in_team
-        self.teams = [_StorageOfAllTeamResults for _ in range(numer_of_team)]
+        self.teams = [_StorageOfAllTeamResults(number_of_player_in_team) for _ in range(number_of_team)]
 
-    def update_coord_cell(self, all_coord_cell: list[list[_CellInRow]]) -> bool:
+    def update_coord_cell(self, all_coord_cell: list[list[_CellInRow]]) -> None:
         """
         Aktualizuje współrzędne graczy.
 
@@ -49,11 +55,10 @@ class StorageOfAllPlayersScore:
         :return - czy udało się zaaktualizować
         """
         if len(all_coord_cell) != self.number_of_teams or len(all_coord_cell[0]) != self.number_of_players_in_team:
-            return False
+            raise ValueError("all_coord_cell ma zły wymiar")
         for i, team in enumerate(self.teams):
             for j, player in enumerate(team.players_results):
                 player.cell_in_row = all_coord_cell[i][j]
-        return True
 
     def calculate_league_points(self) -> bool:
         """
@@ -115,7 +120,13 @@ class _StorageOfAllTeamResults:
         self.players_results: list[_StorageOfPlayerResults] = []
         self.team_results: _StorageOfTeamResults = _StorageOfTeamResults()
         for i in range(number_of_players):
-            self.players_results.append(_StorageOfPlayerResults())
+            self.players_results.append(_StorageOfPlayerResults(self.team_results.update_team_result))
+
+    def __repr__(self) -> str:
+        return f"""
+            {self.players_results=}
+            {self.team_results}
+        """
 
 
 class _StorageOfTeamResults:
@@ -130,7 +141,7 @@ class _StorageOfTeamResults:
     number_of_rzut - zsumowana ilość rzutów drużyny
     PD - zsumowana ilość punktów drużyny
     PS - zsumowana ilość punktów setowych
-    sum_difference -różnica między tą drużyną a przeciwnikiem (this - opposit)
+    sum_difference - różnica między tą drużyną a przeciwnikiem (this - opposit)
     """
     def __init__(self) -> None:
         self.suma: int = 0
@@ -141,6 +152,19 @@ class _StorageOfTeamResults:
         self.PD: float = 0
         self.PS: float = 0
         self.sum_difference: int = 0
+
+    def __str__(self) -> str:
+        return f"""
+            Wyniki drużyny:
+                {self.suma=}
+                {self.pelne=}
+                {self.zbierane=}
+                {self.dziur=}
+                {self.number_of_rzut=}
+                {self.PS=}
+                {self.PD=}
+                {self.sum_difference=}
+        """
 
     def update_league_points(self, sum_pd: int, sum_ps: int, sum_difference: int) -> None:
         """
@@ -154,6 +178,25 @@ class _StorageOfTeamResults:
         self.PS = sum_ps
         self.sum_difference = sum_difference
 
+    def update_team_result(self, rzut_difference: int, pelne_difference: int, zbierane_difference: int) -> None:
+        """
+        Funkcja zwiększa ilość rzutów, pelne, zbierane i dziur drużyny. Otrzymuje różnicę jaką gracz ma w porównaniu
+        do przedostatniego rzutu.
+
+        :param rzut_difference: - o ile wzrosła ilość rzutów
+        :param pelne_difference: - o ile wzrosłą liczba pełnych gracza
+        :param zbierane_difference: - o ile wzrosłą liczba zbieranych
+        """
+        if rzut_difference == 0 and pelne_difference == 0 and zbierane_difference == 0:
+            return
+        self.number_of_rzut += rzut_difference
+        if pelne_difference == 0 and zbierane_difference == 0:
+            self.dziur += 1
+            return
+        self.pelne += pelne_difference
+        self.zbierane += zbierane_difference
+        self.suma += pelne_difference + zbierane_difference
+
 
 class _StorageOfPlayerResults:
     """
@@ -165,6 +208,13 @@ class _StorageOfPlayerResults:
         - wyniki z ligii
         - współrzędne komórek należącyhc do gracza
 
+    get_list_pelne() -> list[int]
+    get_list_zbierane() -> list[int]
+    get_list_suma() -> list[int]
+    update_data(Union[int, None], int, int) -> None - aktualizuje wynik
+    get_cell(int, np.ndarray) -> np.ndarray - zwraca wyciętą komórkę z danymi
+    update_league_points(int, int, list<int>) -> None - aktualizuje wyniki ligowe gracza
+
     tor_number - index toru, na ktrym gra zawodnik (w Gostyniu od 1 do 6)
     coord_in_row - obiekt z danymi gdzie na obrazie znajdują się komórki z danymi o graczach
     number_of_tor - numer touru podczas gry (od 0 do 4) - 4 oznacza koniec gry
@@ -172,11 +222,14 @@ class _StorageOfPlayerResults:
     result_tory - przechowuje pod każdym indeksem informacje o jednym torze
     result_main - przechowuje podsumowanie o grze
     """
-    def __init__(self) -> None:
+    def __init__(self, update_team_result) -> None:
         """
+        :param update_team_result: func - funkcja z obiektu _StorageOfTeamResults służąca do aktualizacji wyniku drużyny
         __game_is_end: czy zawodnik zakończył już grę
+        __update_team_result: matoda z klasy _StorageOfTeamResults do aktualizacji danych drużyny
         """
         self.__game_is_end: bool = False
+        self.__update_team_result = update_team_result
         self.cell_in_row: Union[_CellInRow, None] = None
         self.tor_number: Union[int, None] = 0
         self.number_of_tor: int = 0
@@ -191,31 +244,30 @@ class _StorageOfPlayerResults:
 
     def __repr__(self) -> str:
         return f"""
-            Numer toru: {self.tor_number}, który tor: {self.number_of_tor},  \
-            rzut na torze: {self.number_of_rzut_in_tor}
+            Numer toru: {self.tor_number}, który tor: {self.number_of_tor}, rzut na torze: {self.number_of_rzut_in_tor}
             Tory: {self.result_tory.__repr__()}
             Główne: {self.result_main.__repr__()}
                 Pełne: {self.get_list_pelne()}
                 Zbierane: {self.get_list_zbierane()}
                 Suma: {self.get_list_suma()}
-                {self.cell_in_row}
+                Współrzędne komórek: {self.cell_in_row}
         """
 
-    def get_list_pelne(self) -> list[int]:
+    def get_list_pelne(self) -> list[Union[None, int]]:
         """Zwraca listę z wynikami osiągniętymi w pełnych."""
         list_pelne = []
         for tor in self.result_tory:
             list_pelne += tor.list_pelne
         return list_pelne
 
-    def get_list_zbierane(self) -> list[int]:
+    def get_list_zbierane(self) -> list[Union[None, int]]:
         """Zwraca listę z wynikami osiągniętymi w zbieranych."""
         list_zbierane = []
         for tor in self.result_tory:
             list_zbierane += tor.list_zbierane
         return list_zbierane
 
-    def get_list_suma(self) -> list[int]:
+    def get_list_suma(self) -> list[Union[None, int]]:
         """Zwraca listę z wynikami osiągniętymi w całej grze."""
         list_pelne = []
         for tor in self.result_tory:
@@ -223,16 +275,19 @@ class _StorageOfPlayerResults:
         return list_pelne
 
     def update_data(self, tor_number: Union[int, None] = None,
-                    number_of_rzut_in_tor: int = 0, result_in_last_rzut: int = 0) -> None:
+                    number_of_rzut_in_tor: int = 0, result_player: int = 0) -> None:
         """
         Funkcja do aktualizacji danych.
 
         :param tor_number: numer toru na którym gra zawodnik (w dostyniu 1-6 lub None jeżeli aktualnie nie gra)
         :param number_of_rzut_in_tor: numer rzutu na torze
-        :param result_in_last_rzut: wynik w ostatnim rzucie
+        :param result_player: wynik w całej grze
         """
         if self.__game_is_end:
             return
+
+        result_in_last_rzut = result_player - self.result_main.suma
+        rzut_now = self.number_of_tor*30 + self.number_of_rzut_in_tor
         self.tor_number = tor_number
         if number_of_rzut_in_tor == 0 and self.number_of_rzut_in_tor != 0:
             self.number_of_tor += 1
@@ -243,6 +298,12 @@ class _StorageOfPlayerResults:
             self.__game_is_end = True
             return
         if number_of_rzut_in_tor:
+            rzut_difference = self.number_of_tor*30 + number_of_rzut_in_tor - rzut_now
+            if number_of_rzut_in_tor <= 15:
+                self.__update_team_result(rzut_difference, result_in_last_rzut, 0)
+            else:
+                self.__update_team_result(rzut_difference, 0, result_in_last_rzut)
+
             self.result_tory[self.number_of_tor].update_data(number_of_rzut_in_tor, result_in_last_rzut)
             self.result_main.update_data(number_of_rzut_in_tor + self.number_of_tor*30, result_in_last_rzut)
 
@@ -381,6 +442,6 @@ class _StorageDataTor:
         if new_value == 0:
             self.dziur += 1
 
-    def get_list_suma(self) -> list[int]:
+    def get_list_suma(self) -> list[Union[None, int]]:
         """Funkcja zwraca listę 30 elementów zawierającą poszczególne rzuty z pełnych i zbieranych."""
         return self.list_pelne + self.list_zbierane
