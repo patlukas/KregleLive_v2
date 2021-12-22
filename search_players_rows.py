@@ -13,6 +13,7 @@ class _CellInRow:
     get_coord_y() -> list<int, int> - zwraca górną i dolną współrzędną wiersza
     get_list_coord_x() -> list<list<int, int>> zwraca listę dwuelementowych list z współrzędnymi: lewą i prawą komórki
     get_coord_x(int) -> list<int, int> - zwraca prawą i lewą współrzędną komórki o indeksie "index"
+    get_cell(np.ndarray, int) -> np.ndarray - zwraca wyciętą komórkę z kolumny o podanym indeksie
     """
     def __init__(self, coord_y: list, array_coord_x: list) -> None:
         """
@@ -56,6 +57,18 @@ class _CellInRow:
         if index_coord_x >= len(self.__array_coord_x):
             raise IndexError
         return self.__array_coord_x[index_coord_x]
+
+    def get_cell(self, img: np.ndarray, index_column: int) -> np.ndarray:
+        """
+        Funkcja zwraca wciętą komórkę z wybranej kolumny.
+
+        :param index_column: index kolumny
+        :param img: obraz z którego będzie wycinana komórka
+        :return: obraz komórki
+        """
+        y0, y1 = self.get_coord_y()
+        x0, x1 = self.get_coord_x(index_column)
+        return img[y0:y1, x0:x1]
 
 
 class LookingForPlayerTables:
