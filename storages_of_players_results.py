@@ -256,18 +256,26 @@ class _StorageOfPlayerResults:
             list_pelne += tor.get_list_suma()
         return list_pelne
 
-    def update_data(self, tor_number: Union[int, None] = None,
-                    number_of_rzut_in_tor: int = 0, result_player: int = 0) -> int:
+    def update_data(self, tor_number: Union[str, None] = "", number_of_rzut_in_tor: Union[str, None] = "",
+                    result_player: Union[str, None] = "0") -> int:
         """
         Funkcja do aktualizacji danych.
 
-        :param tor_number: numer toru na którym gra zawodnik (w dostyniu 1-6 lub None jeżeli aktualnie nie gra)
+        Jeżeli któraś z podanych wartości to None, to oznacza że nie udało się odczytać odczytać tej wartości.
+        :param tor_number: numer toru na którym gra zawodnik (w Gostyniu 1-6), lub "" gdy nie gra obecnie
         :param number_of_rzut_in_tor: numer rzutu na torze
         :param result_player: wynik w całej grze
-        :return: 0 - nie było zmian, 1 - były zmiany, -1 - gracz już skończył grę
+        :return: 0 - nie było zmian, 1 - były zmiany, -1 - gracz już skończył grę, -2 - któraś wartość była błędna
         """
         if self.__game_is_end:
             return -1
+        if tor_number is None or number_of_rzut_in_tor is None or result_player is None \
+                or number_of_rzut_in_tor == "" or result_player == "":
+            return -2
+
+        tor_number = (None if tor_number == "" else int(tor_number))
+        number_of_rzut_in_tor = int(number_of_rzut_in_tor)
+        result_player = int(result_player)
 
         result_in_last_rzut = result_player - self.result_main.suma
         rzut_now = self.number_of_tor*30 + self.number_of_rzut_in_tor
