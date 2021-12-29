@@ -230,10 +230,15 @@ print_error = PrintError("main", list_add_error)
 #         return array_img_cell_name
 #
 
-# TODO 1 - klasa do przechowywania wyników graczy oraz wsp komórek, jeżeli 2 drużyny to liczy ligowe pojedynki
-# TODO 2 - klasa srawdzająca czy tabelka zostałą przesunięta
-# TODO 3 - klasa odczytująca wyniki
+# GOTOWE_TODO 1 - klasa do przechowywania wyników graczy oraz wsp komórek, jeżeli 2 drużyny to liczy ligowe pojedynki
+# GOTOWE_TODO 2 - klasa srawdzająca czy tabelka zostałą przesunięta
+# TODO 3 - klasa odczytująca wyniki (KL8)
+# TODO 4 - klasa do przypasowywania automatycznego i ręcznego nierozpoznanych obrazów (KL7)
+# TODO 5 - klasa tworząca tebele z wynikami całych drużyn i poszczególnych torów (KL9)
+# TODO 6 - GUI (KL11)
+# TODO 7 - Google Spreadscheets (KL12)
 
+#TODO czy w match_sign po nie dopasownaiu znaku jest zapisywany znak w innym folderze dla nierozpoznanych
 
 # k.on_data_initialization(2, 6)
 # k.teams[0][1].update_data(number_of_rzut_in_tor=16, result_in_last_rzut=4)

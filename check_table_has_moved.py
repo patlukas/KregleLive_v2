@@ -43,7 +43,7 @@ class CheckTableHasMoved:
         obraz co zapisany został zapisany w self.__list_cutted_cells.
 
         :param img: obraz klatki
-        :return: True jeżeli obraz się przesunął, nie ma listy
+        :return: True jeżeli obraz się przesunął lub lista jest pusta
         """
         if len(self.__list_row_details) != len(self.__list_cutted_cells):
             return True

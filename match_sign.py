@@ -5,6 +5,7 @@ import os
 import cv2
 import logging
 from typing import Union
+from datetime import datetime
 import logging_config
 
 
@@ -15,19 +16,23 @@ class _MatchedDetails:
     data_change(np.ndarray, obj<_SignDetails>, float) funkcja przypisje nowe zmienne do zmiennych obiektu
     self.sign: (None | str) None - nie przypasowano żadnego znaku, str - oznaczenie przypasowanego znaku
     self.matched: (float) wartość z przedziału <0, 1> w jakim stopniu przypasowano znak
-    self.on_add_template: (func) funkcja do dodania szukanego znaku do os, lub print("") jeżlei nie przypasowano
+    self.on_add_template_to_sign_folder: (func) funkcja dodaje szukany znak do os lub print("") jak nie przypasowano
+    self.on_add_template_to_unrecognized_sign_folder: (func) funkcja dodaje znak do folderu z nierozpoznanymi
     """
 
-    def __init__(self, sign_new_template: np.ndarray) -> None:
+    def __init__(self, sign_new_template: np.ndarray, add_unrecognized) -> None:
         """
         Funkcja tworzy zmienne obiektu z domyślnymi danymi.
 
         :param sign_new_template: obraz znaku, dla którego szukane jest dopasowanie
+        :param add_unrecognized: funkcja dodająca obraz do folderu z nierozpoznanymi znakami
         """
         self.__sign_new_template = sign_new_template
-        self.sign = False
+        self.sign = None
         self.matched = 0
-        self.on_add_template = lambda: logging.info("Nie udało się przypisać znaku!")
+        self.on_add_template_to_sign_folder = lambda: logging.info("Nie udało się przypisać znaku!")
+        self.on_add_template_to_unrecognized_sign_folder = lambda: add_unrecognized(sign_new_template,
+                                                                                    self.sign, self.matched)
 
     def __str__(self) -> str:
         """Funkcja jest używana przy użyciu print na obiekcie."""
@@ -42,7 +47,7 @@ class _MatchedDetails:
         """
         self.sign = sign_details.sign
         self.matched = matched
-        self.on_add_template = lambda: sign_details.add_new_template(self.__sign_new_template)
+        self.on_add_template_to_sign_folder = lambda: sign_details.add_new_template(self.__sign_new_template)
 
 
 class MatchImgToSign:
@@ -55,21 +60,25 @@ class MatchImgToSign:
     list_added_template: (list) <str> lista nazw plików dodanych do systemu podczas działania programu
     """
 
-    def __init__(self, *, name_main_dir: str = "templates", threshold_end_search: float = 0.9) -> None:
+    def __init__(self, name_main_dir: str = "templates", path_unrecognized: str = "unrecognized",
+                 threshold_end_search: float = 0.9) -> None:
         """
         :param name_main_dir: nazwa głównego katalogu
         :param threshold_end_search: wartość przypasowania, po przekroczeniu której kończy się szukanie pasującego znaku
+        :param pa
 
         Zmienne obiektu:
             :param self.__name_main_dir: (str) przechowuje nazwę głównego katalogu
             :param self.__threshold_end_search: (float) przechowuje wartość z przedziału <0, 1>, funkcja kończy szuaknie
                                                         znaku, po znalezieniu znaku podobnego w tym stopniu
+            :param self.__path_unrecognized: (str) ścieżka do folderu z nierozpoznanymi obrazami
             :param self.__list_signs_details: (list) <obj _SignDetails>, przchowuje dane o znakach
                                                      z systemu oraz przechowuje szablony pobrane z systemu
             :param self.list_added_template: (list) <str> lista nazw plików dodanych do systemu
         """
         self.__name_main_dir = name_main_dir
         self.__threshold_end_search = threshold_end_search
+        self.__path_unrecognized = path_unrecognized
         self.__list_signs_details = []
         self.list_added_template = []
         self.__create_list_signs()
@@ -118,7 +127,7 @@ class MatchImgToSign:
         :param img: obraz do przypasowania
         :return: obiekt <_MatchedDetails>
         """
-        return_dict = _MatchedDetails(img)
+        return_dict = _MatchedDetails(img, self.add_new_unrecognized_temp_to_os)
         for sign_details in self.__get_hierarchy_sign(img):
             for template in sign_details.list_templates:
                 matched_val = self.__get_matched_value(img, template)
@@ -192,6 +201,34 @@ class MatchImgToSign:
                 return sign_details.add_new_template(img_temp)
         logging.warning(f"Znak '{sign}' nie ma swojego _SignDetails w self.__list_signs_details")
         return False
+
+    def add_new_unrecognized_temp_to_os(self, img_temp: np.ndarray, sign: Union[None, str],
+                                        matched: float) -> Union[bool, str]:
+        """
+        Metoda dodaje obraz znaku do folderu z nierozpoznanymi znakami.
+
+        Zostaje dodany plik ze znakiem do folderu pod ścieżką self.__path_unrecognized.
+        Dodany plik w nazwie będzie miał aktualną datę.
+
+        :param img_temp: obraz nierozpoznanego znaku
+        :param sign: jaki znak został oszacowany lub None jak nic nie jest podobne
+        :param matched: w jakim stopniu jest podobny
+        :return: jeżeli udało się dodać to zwraca ścieżkę do pliku, w innym przypadku False
+        """
+        new_temp = self.__resize_img(img_temp)[0]
+        name_new_file = datetime.now().strftime("%Y-%m-%d %H-%M-%S-%f")
+        path = f"{self.__path_unrecognized}/{name_new_file}"
+        if sign is None:
+            path += " UNRECOGNIZED"
+        else:
+            path += f" {sign}({int(matched*100)}%)"
+        try:
+            cv2.imwrite(f"{path}.jpg", new_temp)
+            np.save(f"{path}.npy", new_temp)
+            return f"{path}.npy"
+        except FileNotFoundError:
+            logging.warning(f"Nie można zapisać pod ścieżką '{path}'")
+            return False
 
 
 class _SignDetails:

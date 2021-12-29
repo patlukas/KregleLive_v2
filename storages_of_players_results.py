@@ -11,7 +11,6 @@ class StorageOfAllPlayersScore:
     Klasa przechowuje wyniki wszystkich graczy oraz drużyn.
 
     on_data_initialization(int, int) -> None - tworzy nową strukturę obiektu, jest wywoływana przy tworzeniu obiektu
-    update_coord_cell(list[list[_CellInRow]]) -> None - aktualizuje współrzędne komórek na obrazie
     calculate_league_points() -> bool - Funkcja zlicza punkty ligowe graczy i drużyn
     teams - lista przechowująca wyniki graczy i drużyn
     number_of_teams - ilość drużyn
@@ -45,20 +44,6 @@ class StorageOfAllPlayersScore:
         self.number_of_teams = number_of_team
         self.number_of_players_in_team = number_of_player_in_team
         self.teams = [_StorageOfAllTeamResults(number_of_player_in_team) for _ in range(number_of_team)]
-
-    def update_coord_cell(self, all_coord_cell: list[list[_CellInRow]]) -> None:
-        """
-        Aktualizuje współrzędne graczy.
-
-        Funkcja aktualizuje listę zawierającą współrzędne komórek z danymi graczy na obrazie tabeli.
-        :param all_coord_cell - zawiera obiekty ze współrzędnymi podzielone odpowiednio na drużyny
-        :return - czy udało się zaaktualizować
-        """
-        if len(all_coord_cell) != self.number_of_teams or len(all_coord_cell[0]) != self.number_of_players_in_team:
-            raise ValueError("all_coord_cell ma zły wymiar")
-        for i, team in enumerate(self.teams):
-            for j, player in enumerate(team.players_results):
-                player.cell_in_row = all_coord_cell[i][j]
 
     def calculate_league_points(self) -> bool:
         """
@@ -212,7 +197,6 @@ class _StorageOfPlayerResults:
     get_list_zbierane() -> list[int]
     get_list_suma() -> list[int]
     update_data(Union[int, None], int, int) -> None - aktualizuje wynik
-    get_cell(int, np.ndarray) -> np.ndarray - zwraca wyciętą komórkę z danymi
     update_league_points(int, int, list<int>) -> None - aktualizuje wyniki ligowe gracza
 
     tor_number - index toru, na ktrym gra zawodnik (w Gostyniu od 1 do 6)
@@ -230,7 +214,6 @@ class _StorageOfPlayerResults:
         """
         self.__game_is_end: bool = False
         self.__update_team_result = update_team_result
-        self.cell_in_row: Union[_CellInRow, None] = None
         self.tor_number: Union[int, None] = 0
         self.number_of_tor: int = 0
         self.number_of_rzut_in_tor: int = 0
@@ -250,7 +233,6 @@ class _StorageOfPlayerResults:
                 Pełne: {self.get_list_pelne()}
                 Zbierane: {self.get_list_zbierane()}
                 Suma: {self.get_list_suma()}
-                Współrzędne komórek: {self.cell_in_row}
         """
 
     def get_list_pelne(self) -> list[Union[None, int]]:
@@ -275,16 +257,17 @@ class _StorageOfPlayerResults:
         return list_pelne
 
     def update_data(self, tor_number: Union[int, None] = None,
-                    number_of_rzut_in_tor: int = 0, result_player: int = 0) -> None:
+                    number_of_rzut_in_tor: int = 0, result_player: int = 0) -> int:
         """
         Funkcja do aktualizacji danych.
 
         :param tor_number: numer toru na którym gra zawodnik (w dostyniu 1-6 lub None jeżeli aktualnie nie gra)
         :param number_of_rzut_in_tor: numer rzutu na torze
         :param result_player: wynik w całej grze
+        :return: 0 - nie było zmian, 1 - były zmiany, -1 - gracz już skończył grę
         """
         if self.__game_is_end:
-            return
+            return -1
 
         result_in_last_rzut = result_player - self.result_main.suma
         rzut_now = self.number_of_tor*30 + self.number_of_rzut_in_tor
@@ -292,11 +275,11 @@ class _StorageOfPlayerResults:
         if number_of_rzut_in_tor == 0 and self.number_of_rzut_in_tor != 0:
             self.number_of_tor += 1
         elif number_of_rzut_in_tor == self.number_of_rzut_in_tor and result_in_last_rzut == 0:
-            return
+            return 0
         self.number_of_rzut_in_tor = number_of_rzut_in_tor
         if self.number_of_tor == 4:
             self.__game_is_end = True
-            return
+            return -1
         if number_of_rzut_in_tor:
             rzut_difference = self.number_of_tor*30 + number_of_rzut_in_tor - rzut_now
             if number_of_rzut_in_tor <= 15:
@@ -306,26 +289,7 @@ class _StorageOfPlayerResults:
 
             self.result_tory[self.number_of_tor].update_data(number_of_rzut_in_tor, result_in_last_rzut)
             self.result_main.update_data(number_of_rzut_in_tor + self.number_of_tor*30, result_in_last_rzut)
-
-    def get_cell(self, index_column: int, img: np.ndarray) -> np.ndarray:
-        """
-        Funkcja zwraca wyciętą komórkę z przekazanego obrazu.
-
-        :param index_column: index komórki do zwrócenia, czyli numer kolumny
-        :param img: obraz z którego zostanie wycięta komórka
-        :return: (np.ndarray) wycięta komórka
-                (bool) jeżeli nie m ustawionych współrzędnych
-        :raise: podane zbyt duży numer kolumny
-        :raise: jest za mały obraz
-        """
-        if self.cell_in_row is None:
-            raise IndexError("Column no exist")
-        y0, y1 = self.cell_in_row.get_coord_y()
-        x0, x1 = self.cell_in_row.get_coord_x(index_column)
-        if len(img) <= y1 or len(img[0]) <= x1:
-            raise IndexError("Image is too small")
-        else:
-            return img[y0:y1, x0:x1]
+        return 1
 
     def update_league_points(self, pd: int, sum_ps: int, list_ps: list[int]) -> None:
         """

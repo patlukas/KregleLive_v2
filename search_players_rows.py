@@ -68,7 +68,10 @@ class _CellInRow:
         """
         y0, y1 = self.get_coord_y()
         x0, x1 = self.get_coord_x(index_column)
-        return img[y0:y1, x0:x1]
+        if len(img) <= y1 or len(img[0]) <= x1:
+            raise IndexError("Image is too small")
+        else:
+            return img[y0:y1, x0:x1]
 
 
 class LookingForPlayerTables:
