@@ -10,10 +10,14 @@ from typing import Union, Tuple
 class ReadingDataFromImage:
     """
     Klasa służy do odczytu aktualnych danych z podanego numeru wiersza.
+
+    update_indexes_of_columns(int, int, int) -> None - aktualizacja numerów kolumn z konkretnymi danymi
+    update_list_row_data(list[_CellInRow]) -> None - aktualizuje listę obiektów z wierszami
+    read_data_from_row(np.ndarray, int) -> tuple(3x <int|None>) -zwraca odczytane wartości z wiersza o wskazanym indexie
     """
     def __init__(self, obj_to_read_number_from_cell: ReadingNumbersFromCell,
-                 column_with_lane: int, column_with_throws: int, column_with_result):
-        self.__obj_to_read_number_from_cell = obj_to_read_number_from_cell
+                 column_with_lane: int, column_with_throws: int, column_with_result: int):
+        self.__obj_to_read_number_from_cell: ReadingNumbersFromCell = obj_to_read_number_from_cell
         self.__column_with_lane: int = column_with_lane
         self.__column_with_throw: int = column_with_throws
         self.__column_with_result: int = column_with_result
