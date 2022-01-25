@@ -119,6 +119,9 @@ class _StorageOfTeamResults:
     Klasa do przechowywania zsumowanych wyników całej drużyny.
 
     update_league_points(int, int, int): None - aktualizuje PD, PS i różnicę między drużynami
+    set_name(str): None - aktualizuje nazwę drużyny
+
+    name - nazwa drużyny
     suma - zsumowany wynik
     pelne - zsumowane pelne
     zbierane - zsumowane zbierane
@@ -129,6 +132,7 @@ class _StorageOfTeamResults:
     sum_difference - różnica między tą drużyną a przeciwnikiem (this - opposit)
     """
     def __init__(self) -> None:
+        self.name: str = ""
         self.suma: int = 0
         self.pelne: int = 0
         self.zbierane: int = 0
@@ -150,6 +154,14 @@ class _StorageOfTeamResults:
                 {self.PD=}
                 {self.sum_difference=}
         """
+
+    def set_name(self, name: str) -> None:
+        """
+        Aktualizuje nazwę drużyny.
+
+        :param name - nowa nazwa zespołu
+        """
+        self.name = name
 
     def update_league_points(self, sum_pd: int, sum_ps: int, sum_difference: int) -> None:
         """
@@ -199,6 +211,9 @@ class _StorageOfPlayerResults:
     update_data(Union[int, None], int, int) -> None - aktualizuje wynik
     update_league_points(int, int, list<int>) -> None - aktualizuje wyniki ligowe gracza
 
+    list_name - lista nazw graczy (jeżeli była zmiana to aktualny gracz jest pod ustatnim indeksem)
+    list_when_changes - zaiwera info w którym rzucie gracz zaczął grać
+    team_name - nazwa drużyny
     tor_number - index toru, na ktrym gra zawodnik (w Gostyniu od 1 do 6)
     coord_in_row - obiekt z danymi gdzie na obrazie znajdują się komórki z danymi o graczach
     number_of_tor - numer touru podczas gry (od 0 do 4) - 4 oznacza koniec gry
@@ -212,6 +227,9 @@ class _StorageOfPlayerResults:
         __game_is_end: czy zawodnik zakończył już grę
         __update_team_result: matoda z klasy _StorageOfTeamResults do aktualizacji danych drużyny
         """
+        self.list_name: list[str] = ["Patryk Ja", "Kwadd", ""]
+        self.list_when_changes: list[int] = [0]
+        self.team_name: str = ""
         self.__game_is_end: bool = False
         self.__update_team_result = update_team_result
         self.tor_number: Union[int, None] = 0
@@ -234,6 +252,56 @@ class _StorageOfPlayerResults:
                 Zbierane: {self.get_list_zbierane()}
                 Suma: {self.get_list_suma()}
         """
+
+    def set_list_name(self, list_name: list[str], list_when_changes: list[int] = (0)):
+        """
+        Metoda ustawia nazwę gracza oraz kiedy były zmiany.
+
+        list_name zawiera w komórce pod indexsem -1 aktualnego gracza
+        list_when_changes używana w ligowych rozgrywkach, gdy są możliwe zmiany
+
+        :param list_name: lista graczy, w indiwidualnych zawodach len == 1, ale w ligowych po zmienie zaiwera kilka nazw
+        :param list_when_changes: pod indeksem 0 jest rzut od którego gracz 0 zaczął (czyli rzut numer 0),
+                                  w przypadku zmiany pod indexem 1 kiedy gracz 1 na list_name zaczął
+        """
+        self.list_name = list_name
+        self.list_when_changes = list_when_changes
+
+    def set_team_name(self, team_name: str) -> None:
+        """
+        Metoda ustawia nazwę drużyny do której gracz należy
+
+        :param team_name: nazwa zespołu do której gracz należy
+        """
+        self.team_name = team_name
+
+    def get_all_name_to_string(self) -> str:
+        """
+        Metoda zwraca napis z nazwą gracza, lub skróconą formę w przypadku kilku osób (inicjał imienia)
+
+        :return: Jak len == 1: Imię Nazwisko, jak len > 1: Imicjał imienia. Nazwisko/...
+        """
+        if len(self.list_name) == 1:
+            return self.list_name[0]
+
+        string = ""
+        for name in self.list_name:
+            list_word = name.split()
+            string += "/"
+            if len(list_word) == 0:
+                continue
+            for word in list_word[:-1]:
+                string += word[0]+". "
+            string += list_word[-1]
+        else:
+            string = string[1:]
+        return string
+
+    def get_name_playing_player(self) -> str:
+        """
+        Metoda zwraca nazwę aktualnie grającego gracza.
+        """
+        return self.list_name[-1]
 
     def get_list_pelne(self) -> list[Union[None, int]]:
         """Zwraca listę z wynikami osiągniętymi w pełnych."""

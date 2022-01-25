@@ -1,0 +1,90 @@
+{
+  "path_to_table": <ścieżka do pliku z obrazem tabeli>,
+  "settings": {
+    <
+        settings przy dodawaniu napisu są nadpisywane w głąb, w każdym 'settings'
+        mogą być następujące dane
+    >:
+    "font_path": <ścieżka do pliku z czcionką>,
+    "font_color": <kolor zapisany w następujący sposób [0,0,0] (czarny)>
+    "max_font_size": <maksymalny rozmiar czcionki>,
+    "left": <lewa współrzędna>,
+    "top": <górna współrzędna>,
+    "width": <szerokość komórki>,
+    "height": <wysokość komórki>
+  },
+  "subtitles": {
+    <dodawanie określonego tekstu w tym pliku>
+    "settings": {},
+    "cell": [
+      {
+        "text": <tekst który ma być dodany>,
+        "settings": {}
+      },... <może być nieograniczona ilość tekstów>
+    ]
+  },
+  "players": {
+    "settings": {},
+    "players": [
+      {
+        "index_team": <numer zespołu licząc od 0, jak indywidualne zawody to wszyscy są w 0>,
+        "index_player_in_team": <numer gracza w zespole licząc od 0>,
+        "settings": {},
+        "cell": {
+          <rodzaj>: {<opcje z settings>}
+          <mogą być następujące rodzaje:
+            dotyczące nazw:
+                - name - nazwa gracza lub po zmianie inicjał imienia i nazwisko każdego gracza
+                - team_name - nazwa drużyny
+            dotyczące rezultatu głównego, jeżeli numer rzutu == 0 wtedy "":
+                - suma
+                - zbierane
+                - pelne
+                - number_of_rzut
+                - dziur
+                - PS
+                - PD
+            dotyczące poszczególnych torów, jeżeli gracz nie oddał na tym torze rzutu to "":
+                - "torX_Y" lub "torX_Y_Z"-
+                    - zamiast X numer <1,4>
+                    - zamiast Y :
+                        - number_of_rzut
+                        - pelne
+                        - zbierane
+                        - dziur
+                        - suma
+                        - PS
+                    - zaminiast Z:
+                        - win
+                        - draw
+                        - lose
+        }
+      }
+    ]
+  },
+  "teams": {
+    "settings": {},
+    "teams": [
+      {
+        "index_team": <numer zespołu>,
+        "settings": {},
+        "cell": {
+          <rodzaj>: {},
+          możliwe rodzaje:
+            - name
+            - suma
+            - pelne
+            - zbierane
+            - dziur
+            - number_of_rzut
+            - PD
+            - PS
+            - sum_difference
+            - sum_difference_non_negative
+            - sum_difference_positive
+            - sum_difference_negative
+        }
+      }
+    ]
+  }
+}
