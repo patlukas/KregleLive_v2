@@ -4,83 +4,12 @@ import copy
 import numpy as np
 import cv2
 import json
+from PIL import Image
 from storages_of_players_results import StorageOfAllPlayersScore, _StorageOfPlayerResults
-from PIL import ImageFont, ImageDraw, Image, ImageTk
+import methods_to_draw_on_image
 
 
-class _MainMethodsToCreateTable:
-    """
-    Klasa z głównymi metodami do tworzenia tabel.
-
-    draw_center_text_in_cell(Image.Image, str|int|float, int, str, tuple|list, int, int) -> Image.Image - zwraca obraz
-                                                                                        komórki z wyśrodkowanym napisem
-    """
-    def __init__(self):
-        """
-        __used_fonts - {<path_font>: {<size_font>: <object font PIL>}} - słownik z załadowanymi już czcionkami
-        __get_font(str, int) -> PIL.ImageFont.FreeTypeFont - zwraca potrzebną czcionkę
-        """
-        self.__used_fonts: dict = {}
-
-    def __get_font(self, font_path: str, font_size: int) -> ImageFont.FreeTypeFont:
-        """
-        Metoda odpowiedzialna za zwrócenie potrzebnej czcionki.
-
-        Jeżeli potrzebna czcionka nie była jeszcze używana to pobranie jej i zapisanie w __used_fonts, a jak już była
-        używana to zwrócenie czcionki z __used_fonts.
-
-        :param font_path: ścieżka do czcionki
-        :param font_size: rozmiar czcionki
-        :return: obiekt czcionki
-        """
-        if font_path in self.__used_fonts and font_size in self.__used_fonts[font_path]:
-            return self.__used_fonts[font_path][font_size]
-        else:
-            font = ImageFont.truetype(font_path, font_size)
-            if font_path not in self.__used_fonts:
-                self.__used_fonts[font_path] = {}
-            self.__used_fonts[font_path][font_size] = font
-            return font
-
-    def draw_center_text_in_cell(self, img_cell: Image.Image, text: str | int | float, font_size: int,
-                                 font_path: str, color: tuple | list, width: int, height: int) -> Image.Image:
-        """
-        Zwraca obraz komórki z dodanym wyśrodkowanym w pionie i poziomi napisem.
-
-        :param img_cell: obraz komórki
-        :param text: napis który ma być dodany
-        :param font_size: maksymalny rozmiar czcionki, jak się nie zmieści napis to rozmiar zostanie zmniejszony
-        :param font_path: ścieżka do czcionki
-        :param color: kolor czcionki zapisany w postaci (B, G, R)
-        :param width: szerokość komórki
-        :param height: wysokość komórki
-        :return: komórka z dodanym wyśrodkowanym napisem
-        """
-        if type(text) != str:
-            text = str(text)
-        if text == "":
-            return img_cell
-        if type(color) == list:
-            color = tuple(color)
-        if type(font_size) != int:
-            font_size = int(font_size)
-
-        draw = ImageDraw.Draw(img_cell)
-        while True:
-            font = self.__get_font(font_path, font_size)
-            w, h = draw.textsize(text, font=font)
-            if w <= width and h <= height:
-                break
-            font_size -= 1
-            if font_size <= 0:
-                break
-        x = (width - w) // 2
-        y = (height - h) // 2
-        draw.text((x, y), text, font=font, fill=color)
-        return img_cell
-
-
-class _CreatingMainTableDrawResults(_MainMethodsToCreateTable):
+class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImage):
     """
     Klasa odpowiedzialna za tworzenie głównej tabeli z wynikami.
 
@@ -141,7 +70,7 @@ class _CreatingMainTableDrawResults(_MainMethodsToCreateTable):
                 saved_data = self.__saved_data["players"][player_id]
 
             for name_result, settings in player_details["cell"].items():
-                result = self.__get_result_player(index_team, index_player, name_result)
+                result = self.__obj_with_results.get_data_from_player(index_team, index_player, name_result)
                 if name_result in saved_data.keys() and result == saved_data[name_result]:
                     continue
                 else:
@@ -164,7 +93,7 @@ class _CreatingMainTableDrawResults(_MainMethodsToCreateTable):
                 saved_data = self.__saved_data["teams"][index_team]
 
             for name_result, settings in team_details["cell"].items():
-                result = self.__get_result_team(index_team, name_result)
+                result = self.__obj_with_results.get_data_from_team(index_team, name_result)
                 if name_result in saved_data.keys() and result == saved_data[name_result]:
                     continue
                 else:
@@ -215,99 +144,14 @@ class _CreatingMainTableDrawResults(_MainMethodsToCreateTable):
                 values[key] = value
         return values
 
-    def __get_result_player(self, index_team: int, index_player: int, name_result: str) -> str:
-        """
-        Metoda do pobrania wyniku/napisu dotyczącego gracza do wpisania w komórce.
-
-        :param index_team: numer zespołu do którego należy gracz
-        :param index_player: numer gracza w zespole
-        :param name_result: nazwa statystyki
-        :return: napis/wynik do wpisania w komórce
-
-        Możliwe statystyki:
-            1. Nazwy:
-                - name - nazwa gracza lub po zmianie inicjał imienia i nazwisko każdego gracza
-                - team_name - nazwa drużyny
-            2. Główne wyniki (jeżeli numer rzutu == 0 wtedy ""):
-                suma, zbierane, pelne, number_of_rzut, dziur, PS, PD
-            3. Wyniki na torach (jeżeli gracz nie oddał na tym torze rzutu to ""):
-                - "torX_Y" lub "torX_Y_Z"-
-                    - zamiast X numer <1,4>
-                    - zamiast Y :
-                        number_of_rzut, pelne, zbierane, dziur, suma, PS
-                    - zaminiast Z (jak nie spełnione to ""):
-                        - win - gracz wygrywa/wygrał tor
-                        - draw - gracz remisuje/zremisował tor
-                        - lose - gracz przegrywa/przegrał tor
-            4. Inna nazwa statystyki wtedy ""
-        """
-        player_results = self.__obj_with_results.teams[index_team].players_results[index_player]
-        player_lanes_results = player_results.result_tory
-        if name_result == "name":
-            return player_results.get_all_name_to_string()
-        try:
-            if name_result[:3] == "tor":
-                index_tor = int(name_result[3]) - 1
-                list_word = name_result.split("_")
-                kind = list_word[1]
-                if player_lanes_results[index_tor].number_of_rzut == 0:
-                    return ""
-                if len(list_word) == 2:
-                    return player_lanes_results[index_tor].__getattribute__(kind)
-                if player_lanes_results[index_tor].PS == {"win": 1, "draw": 0.5, "lose": 0}[list_word[2]]:
-                    return player_lanes_results[index_tor].__getattribute__(kind)
-                return ""
-            if player_results.result_main.number_of_rzut == 0:
-                return ""
-            return player_results.result_main.__getattribute__(name_result)
-        except AttributeError:
-            return ""
-
-    def __get_result_team(self, index_team: int, name_result: str) -> str:
-        """
-        Metoda do pobrania wyniku/napisu dotyczącego drużyny do wpisania w komórce.
-
-        :param index_team: numer zespołu do którego należy gracz
-        :param name_result: nazwa statystyki
-        :return: napis/wynik do wpisania w komórce
-
-        Możliwe statystyki:
-            1. Nazwy:
-                - name - nazwa drużyny
-            2. Główne wyniki:
-                suma, zbierane, pelne, number_of_rzut, dziur, PS, PD, sum_difference
-            3. Specjalne:
-                sum_difference_non_negative - >= różnica
-                sum_difference_positive > różnica
-                sum_difference_negative < różnica
-            4. Inna nazwa statystyki wtedy ""
-        """
-        team_results = self.__obj_with_results.teams[index_team].team_results
-        if name_result == "sum_difference_non_negative":
-            if team_results.sum_difference >= 0:
-                return team_results.sum_difference
-            else:
-                return ""
-        if name_result == "sum_difference_positive":
-            if team_results.sum_difference > 0:
-                return team_results.sum_difference
-            else:
-                return ""
-        if name_result == "sum_difference_negative":
-            if team_results.sum_difference < 0:
-                return team_results.sum_difference
-            else:
-                return ""
-        try:
-            return team_results.__getattribute__(name_result)
-        except AttributeError:
-            return ""
-
 
 class CreatingMainTable:
     """
     Główna klasa odpowiedzialna za tworzenie tablicy z wynikami.
 
+    set_obj_to_storages_of_players_results(StorageOfAllPlayersScore) -> None - ustawienie nowego obiektu z wynikami
+    set_table_settings(str) -> None - pobranie nowego pliku json z ustawieniami tabli
+    make_table() -> None - tworzy i wyświetla tabelę
     """
 
     def __init__(self, path_to_table_settings: str, obj_with_results: StorageOfAllPlayersScore | None = None):

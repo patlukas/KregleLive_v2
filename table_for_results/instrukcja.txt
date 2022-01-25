@@ -45,7 +45,7 @@
                 - PS
                 - PD
             dotyczące poszczególnych torów, jeżeli gracz nie oddał na tym torze rzutu to "":
-                - "torX_Y" lub "torX_Y_Z"-
+                - "torX_Y" lub "torX_Y_Z" lub "torX_rzutN"-
                     - zamiast X numer <1,4>
                     - zamiast Y :
                         - number_of_rzut

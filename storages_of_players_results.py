@@ -12,6 +12,9 @@ class StorageOfAllPlayersScore:
 
     on_data_initialization(int, int) -> None - tworzy nową strukturę obiektu, jest wywoływana przy tworzeniu obiektu
     calculate_league_points() -> bool - Funkcja zlicza punkty ligowe graczy i drużyn
+    get_data_from_player(int, int, str) -> str - funkcja zwraca potrzebny wynik/napis należący do wybranego gracza
+    get_data_from_team(int, str) -> str - funkcja zwraca potrzebny wynik/napis należący do wybranego zespołu
+
     teams - lista przechowująca wyniki graczy i drużyn
     number_of_teams - ilość drużyn
     number_of_players_in_team - ilość graczy w drużynie
@@ -89,6 +92,102 @@ class StorageOfAllPlayersScore:
             sum_pd = list_sum_pd[i]+point_for_suma[i]
             self.teams[i].team_results.update_league_points(sum_pd, list_sum_ps[i], sum_difference[i])
         return True
+
+    def get_data_from_player(self, index_team: int, index_player: int, name_result: str) -> str:
+        """
+        Metoda do pobrania wyniku/napisu dotyczącego gracza do wpisania w komórce.
+
+        :param index_team: numer zespołu do którego należy gracz
+        :param index_player: numer gracza w zespole
+        :param name_result: nazwa statystyki
+        :return: napis/wynik do wpisania w komórce
+
+        Możliwe statystyki:
+            1. Nazwy:
+                - name - nazwa gracza lub po zmianie inicjał imienia i nazwisko każdego gracza
+                - team_name - nazwa drużyny
+            2. Główne wyniki (jeżeli numer rzutu == 0 wtedy ""):
+                suma, zbierane, pelne, number_of_rzut, dziur, PS, PD
+            3. Wyniki na torach (jeżeli gracz nie oddał na tym torze rzutu to ""):
+                - "torX_Y" lub "torX_Y_Z"-
+                    - zamiast X numer <1,4>
+                    - zamiast Y :
+                        number_of_rzut, pelne, zbierane, dziur, suma, PS,
+                    - zaminiast Z (jak nie spełnione to ""):
+                        - win - gracz wygrywa/wygrał tor
+                        - draw - gracz remisuje/zremisował tor
+                        - lose - gracz przegrywa/przegrał tor
+            4. Wyniki w poszczególnych rzutach na torach
+                - "torX_rzutN"
+                    - zamiast X numer <1,4>
+                    - zamiast N numer rzutu na wybranym torze, jak gracz jeszcze nie oddał  tego rztu to ""
+            5. Inna nazwa statystyki wtedy ""
+        """
+        player_results = self.teams[index_team].players_results[index_player]
+        player_lanes_results = player_results.result_tory
+        if name_result == "name":
+            return player_results.get_all_name_to_string()
+        try:
+            if name_result[:3] == "tor":
+                index_tor = int(name_result[3]) - 1
+                list_word = name_result.split("_")
+                kind = list_word[1]
+                if player_lanes_results[index_tor].number_of_rzut == 0:
+                    return ""
+                if kind[:4] == "rzut":
+                    result = player_lanes_results[index_tor].get_list_suma()[int(kind[4:]) - 1]
+                    return "" if result is None else str(result)
+                else:
+                    if len(list_word) == 2:
+                        return str(player_lanes_results[index_tor].__getattribute__(kind))
+                    if player_lanes_results[index_tor].PS == {"win": 1, "draw": 0.5, "lose": 0}[list_word[2]]:
+                        return str(player_lanes_results[index_tor].__getattribute__(kind))
+                return ""
+            if player_results.result_main.number_of_rzut == 0:
+                return ""
+            return str(player_results.result_main.__getattribute__(name_result))
+        except AttributeError:
+            return ""
+
+    def get_data_from_team(self, index_team: int, name_result: str) -> str:
+        """
+        Metoda do pobrania wyniku/napisu dotyczącego drużyny do wpisania w komórce.
+
+        :param index_team: numer zespołu do którego należy gracz
+        :param name_result: nazwa statystyki
+        :return: napis/wynik do wpisania w komórce
+
+        Możliwe statystyki:
+            1. Nazwy:
+                - name - nazwa drużyny
+            2. Główne wyniki:
+                suma, zbierane, pelne, number_of_rzut, dziur, PS, PD, sum_difference
+            3. Specjalne:
+                sum_difference_non_negative - >= różnica
+                sum_difference_positive > różnica
+                sum_difference_negative < różnica
+            4. Inna nazwa statystyki wtedy ""
+        """
+        team_results = self.teams[index_team].team_results
+        if name_result == "sum_difference_non_negative":
+            if team_results.sum_difference >= 0:
+                return str(team_results.sum_difference)
+            else:
+                return ""
+        if name_result == "sum_difference_positive":
+            if team_results.sum_difference > 0:
+                return str(team_results.sum_difference)
+            else:
+                return ""
+        if name_result == "sum_difference_negative":
+            if team_results.sum_difference < 0:
+                return str(team_results.sum_difference)
+            else:
+                return ""
+        try:
+            return str(team_results.__getattribute__(name_result))
+        except AttributeError:
+            return ""
 
 
 class _StorageOfAllTeamResults:
