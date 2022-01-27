@@ -1,0 +1,139 @@
+{
+  "path_to_table": "szablony/one_lane_table.png",
+  "background_color": [255, 0, 255],
+  "width": 780,
+  "height": 85,
+  "table_coords": {
+    "1": {
+      "top": 0,
+      "left": 0
+    },
+    "2": {
+      "top": 0,
+      "left": 130
+    },
+    "3": {
+      "top": 0,
+      "left": 260
+    },
+    "4": {
+      "top": 0,
+      "left": 390
+    },
+    "5": {
+      "top": 0,
+      "left": 520
+    },
+    "6": {
+      "top": 0,
+      "left": 650
+    }
+  },
+  "cell_in_table": {
+    "settings": {
+      "font_path": "fonts/ubuntu.ttf",
+      "font_color": [0,0,0],
+      "max_font_size": 15,
+      "left": 0,
+      "top": 0,
+      "width": 10,
+      "height": 15
+    },
+    "cell": {
+      "torX_rzut1": {
+        "top": 15,
+        "left": 5
+      },
+      "torX_rzut2": {
+        "left": 17
+      },
+      "torX_rzut3": {
+        "left": 29
+      },
+      "torX_rzut4": {
+        "left": 41
+      },
+      "torX_rzut5": {
+        "left": 53
+      },
+      "torX_rzut6": {
+        "left": 65
+      },
+      "torX_rzut7": {
+        "left": 77
+      },
+      "torX_rzut8": {
+        "left": 89
+      },
+      "torX_rzut9": {
+        "left": 101
+      },
+      "torX_rzut10": {
+        "left": 113
+      },
+      "torX_rzut11": {
+        "top": 31,
+        "left": 5
+      },
+      "torX_rzut12": {
+        "left": 17
+      },
+      "torX_rzut13": {
+        "left": 29
+      },
+      "torX_rzut14": {
+        "left": 41
+      },
+      "torX_rzut15": {
+        "left": 53
+      },
+      "torX_rzut16": {
+        "top": 47,
+        "left": 5
+      },
+      "torX_rzut17": {
+        "left": 17
+      },
+      "torX_rzut18": {
+        "left": 29
+      },
+      "torX_rzut19": {
+        "left": 41
+      },
+      "torX_rzut20": {
+        "left": 53
+      },
+      "torX_rzut21": {
+        "left": 65
+      },
+      "torX_rzut22": {
+        "left": 77
+      },
+      "torX_rzut23": {
+        "left": 89
+      },
+      "torX_rzut24": {
+        "left": 101
+      },
+      "torX_rzut25": {
+        "left": 113
+      },
+      "torX_rzut26": {
+        "top": 63,
+        "left": 5
+      },
+      "torX_rzut27": {
+        "left": 17
+      },
+      "torX_rzut28": {
+        "left": 29
+      },
+      "torX_rzut29": {
+        "left": 41
+      },
+      "torX_rzut30": {
+        "left": 53
+      }
+    }
+  }
+}

@@ -4,7 +4,6 @@
     "font_path": "fonts/ubuntu.ttf",
     "font_color": [255,0,0],
     "max_font_size": 20,
-    "align": "center",
     "left": 100,
     "top": 25,
     "width": 2,
@@ -97,10 +96,11 @@
           }
         }
       },
-      {
-        "index_team": 0,
+       {
+        "index_team": 1,
         "index_player_in_team": 0,
         "settings": {
+          "top": 38,
           "width": 34
         },
         "cell": {
@@ -151,10 +151,11 @@
           }
         }
       },
-      {
+       {
         "index_team": 0,
-        "index_player_in_team": 0,
+        "index_player_in_team": 1,
         "settings": {
+          "top": 53,
           "width": 34
         },
         "cell": {
@@ -205,10 +206,11 @@
           }
         }
       },
-      {
-        "index_team": 0,
-        "index_player_in_team": 0,
+       {
+        "index_team": 1,
+        "index_player_in_team": 1,
         "settings": {
+          "top": 78,
           "width": 34
         },
         "cell": {
@@ -259,10 +261,11 @@
           }
         }
       },
-      {
+       {
         "index_team": 0,
-        "index_player_in_team": 0,
+        "index_player_in_team": 2,
         "settings": {
+          "top": 93,
           "width": 34
         },
         "cell": {
@@ -313,10 +316,11 @@
           }
         }
       },
-      {
-        "index_team": 0,
-        "index_player_in_team": 0,
+       {
+        "index_team": 1,
+        "index_player_in_team": 2,
         "settings": {
+          "top": 108,
           "width": 34
         },
         "cell": {
@@ -365,298 +369,6 @@
             "left": 499,
             "width": 23
           }
-        }
-      },
-      {
-        "index_team": 0,
-        "index_player_in_team": 0,
-        "settings": {
-          "width": 34
-        },
-        "cell": {
-          "name": {
-            "left": 20,
-            "width": 150
-          },
-          "tor1_suma": {},
-          "tor1_suma_win": {
-            "left": 170,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor2_suma_win": {
-            "left": 206,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor3_suma": {},
-          "tor4_suma": {
-            "left": 278,
-            "width": 36
-          },
-          "number_of_throw": {
-            "left": 314,
-            "width": 32
-          },
-          "pelne": {
-            "left": 346
-          },
-          "zbierane": {
-            "left": 380
-          },
-          "dziur": {
-            "left": 414,
-            "width": 20
-          },
-          "suma": {
-            "left": 434
-          },
-          "PS": {
-            "left": 468,
-            "width": 30
-          },
-          "PD": {
-            "left": 499,
-            "width": 23
-          }
-        }
-      },
-      {
-        "index_team": 0,
-        "index_player_in_team": 0,
-        "settings": {
-          "width": 34
-        },
-        "cell": {
-          "name": {
-            "left": 20,
-            "width": 150
-          },
-          "tor1_suma": {},
-          "tor1_suma_win": {
-            "left": 170,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor2_suma_win": {
-            "left": 206,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor3_suma": {},
-          "tor4_suma": {
-            "left": 278,
-            "width": 36
-          },
-          "number_of_throw": {
-            "left": 314,
-            "width": 32
-          },
-          "pelne": {
-            "left": 346
-          },
-          "zbierane": {
-            "left": 380
-          },
-          "dziur": {
-            "left": 414,
-            "width": 20
-          },
-          "suma": {
-            "left": 434
-          },
-          "PS": {
-            "left": 468,
-            "width": 30
-          },
-          "PD": {
-            "left": 499,
-            "width": 23
-          }
-        }
-      },
-      {
-        "index_team": 0,
-        "index_player_in_team": 0,
-        "settings": {
-          "width": 34
-        },
-        "cell": {
-          "name": {
-            "left": 20,
-            "width": 150
-          },
-          "tor1_suma": {},
-          "tor1_suma_win": {
-            "left": 170,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor2_suma_win": {
-            "left": 206,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor3_suma": {},
-          "tor4_suma": {
-            "left": 278,
-            "width": 36
-          },
-          "number_of_throw": {
-            "left": 314,
-            "width": 32
-          },
-          "pelne": {
-            "left": 346
-          },
-          "zbierane": {
-            "left": 380
-          },
-          "dziur": {
-            "left": 414,
-            "width": 20
-          },
-          "suma": {
-            "left": 434
-          },
-          "PS": {
-            "left": 468,
-            "width": 30
-          },
-          "PD": {
-            "left": 499,
-            "width": 23
-          }
-        }
-      },
-      {
-        "index_team": 0,
-        "index_player_in_team": 0,
-        "settings": {
-          "width": 34
-        },
-        "cell": {
-          "name": {
-            "left": 20,
-            "width": 150
-          },
-          "tor1_suma": {},
-          "tor1_suma_win": {
-            "left": 170,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor2_suma_win": {
-            "left": 206,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor3_suma": {},
-          "tor4_suma": {
-            "left": 278,
-            "width": 36
-          },
-          "number_of_throw": {
-            "left": 314,
-            "width": 32
-          },
-          "pelne": {
-            "left": 346
-          },
-          "zbierane": {
-            "left": 380
-          },
-          "dziur": {
-            "left": 414,
-            "width": 20
-          },
-          "suma": {
-            "left": 434
-          },
-          "PS": {
-            "left": 468,
-            "width": 30
-          },
-          "PD": {
-            "left": 499,
-            "width": 23
-          }
-        }
-      },
-      {
-        "index_team": 0,
-        "index_player_in_team": 0,
-        "settings": {
-          "width": 34
-        },
-        "cell": {
-          "name": {
-            "left": 20,
-            "width": 150
-          },
-          "tor1_suma": {},
-          "tor1_suma_win": {
-            "left": 170,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor2_suma_win": {
-            "left": 206,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor3_suma": {},
-          "tor4_suma": {
-            "left": 278,
-            "width": 36
-          },
-          "number_of_throw": {
-            "left": 314,
-            "width": 32
-          },
-          "pelne": {
-            "left": 346
-          },
-          "zbierane": {
-            "left": 380
-          },
-          "dziur": {
-            "left": 414,
-            "width": 20
-          },
-          "suma": {
-            "left": 434
-          },
-          "PS": {
-            "left": 468,
-            "width": 30
-          },
-          "PD": {
-            "left": 499,
-            "width": 23
-          }
-        }
-      },
-      {
-        "index_team": 0,
-        "index_player_in_team": 0,
-        "settings": {
-          "left": 2,
-          "top": 60
-        },
-        "cell": {
-          "name": {},
-          "tor1_suma": {},
-          "tor2_suma": {},
-          "tor3_suma": {},
-          "tor4_suma": {},
-          "number_of_rzut": {},
-          "pelne": {},
-          "zbierane": {},
-          "dziur": {},
-          "suma": {},
-          "PS": {},
-          "PD": {}
         }
       }
     ]

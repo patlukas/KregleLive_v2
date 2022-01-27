@@ -16,7 +16,7 @@ class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
     make_table() -> None : tworzy i wyświetla tabelę
     set_obj_with_results(StorageOfAllPlayersScore) -> None : uaktualnienie obiektu przechowującego wyniki
     """
-    def __init__(self, obj_with_results: StorageOfAllPlayersScore, table_settings: dict | None) -> None:
+    def __init__(self, obj_with_results: StorageOfAllPlayersScore | None, table_settings: dict | None) -> None:
         """
         :param obj_with_results: obiekt z wynikami graczy i drużyn
         :param table_settings: odczytany z json dane w jaki sposób ma być uzupełniona tabela
@@ -28,8 +28,10 @@ class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
         __saved_data: zawiera informacje jakie dane są zapisane na __finished_image
         """
         super().__init__()
-        self.__obj_with_results: StorageOfAllPlayersScore = obj_with_results
+        self.__obj_with_results: StorageOfAllPlayersScore | None = obj_with_results
         self.__table_settings: dict | None = table_settings
+        if table_settings is None:
+            return
         clear_image = cv2.imread(self.__table_settings["path_to_table"])
         self.__clear_image: Image.Image = Image.fromarray(clear_image)
         self.__finished_image: Image.Image = Image.fromarray(clear_image)
@@ -105,7 +107,7 @@ class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
 
     def __draw_subtitles(self) -> None:
         """Metoda wypisuje napisy ktore zostały zapisane do wypisania w pliku json."""
-        subtitles_settings = self.__table_settings["teams"]["settings"]
+        subtitles_settings = self.__table_settings["subtitles"]["settings"]
         subtitles_settings = self.__get_settings(self.__table_settings["settings"], subtitles_settings)
         for details in self.__table_settings["subtitles"]["cell"]:
             settings = self.__get_settings(subtitles_settings, details)
@@ -176,8 +178,11 @@ class CreatingMainTable:
         """
         if path_to_table_settings == "":
             return None
-        file = open(path_to_table_settings, encoding='utf8')
-        return json.load(file)
+        try:
+            file = open(path_to_table_settings, encoding='utf8')
+            return json.load(file)
+        except FileNotFoundError:
+            return None
 
     def set_obj_to_storages_of_players_results(self, obj_with_results: StorageOfAllPlayersScore) -> None:
         """
