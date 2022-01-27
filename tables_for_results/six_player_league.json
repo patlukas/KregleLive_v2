@@ -1,7 +1,7 @@
 {
-  "path_to_table": "szablony/clasic_two_team_6.png",
+  "path_to_table": "tables_for_results/img_tables/clasic_two_team_6.png",
   "settings": {
-    "font_path": "fonts/ubuntu.ttf",
+    "font_path": "tables_for_results/fonts/ubuntu.ttf",
     "font_color": [255,0,0],
     "max_font_size": 20,
     "left": 100,

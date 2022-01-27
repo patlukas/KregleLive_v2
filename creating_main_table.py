@@ -4,6 +4,8 @@ import copy
 import numpy as np
 import cv2
 import json
+import logging
+import logging_config
 from PIL import Image
 from storages_of_players_results import StorageOfAllPlayersScore, _StorageOfPlayerResults
 import methods_to_draw_on_image
@@ -33,6 +35,10 @@ class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
         if table_settings is None:
             return
         clear_image = cv2.imread(self.__table_settings["path_to_table"])
+        if clear_image is None:
+            logging.warning(f"Nie można otworzyć obrazu {self.__table_settings['path_to_table']}")
+            self.__table_settings = None
+            return
         self.__clear_image: Image.Image = Image.fromarray(clear_image)
         self.__finished_image: Image.Image = Image.fromarray(clear_image)
         self.__saved_data: dict = {"players": {}, "teams": {}}
@@ -182,6 +188,7 @@ class CreatingMainTable:
             file = open(path_to_table_settings, encoding='utf8')
             return json.load(file)
         except FileNotFoundError:
+            logging.warning(f"Nie można odczytać ustawień tabeli z pliku {path_to_table_settings}")
             return None
 
     def set_obj_to_storages_of_players_results(self, obj_with_results: StorageOfAllPlayersScore) -> None:

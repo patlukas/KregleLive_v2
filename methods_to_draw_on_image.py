@@ -61,7 +61,10 @@ class MethodsToDrawOnImage:
 
         draw = ImageDraw.Draw(img_cell)
         while True:
-            font = self.__get_font(font_path, font_size)
+            try:
+                font = self.__get_font(font_path, font_size)
+            except OSError:
+                return img_cell
             w, h = draw.textsize(text, font=font)
             if w <= width and h <= height:
                 break

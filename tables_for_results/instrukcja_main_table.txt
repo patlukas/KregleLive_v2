@@ -1,25 +1,28 @@
 {
-  "path_to_table": <ścieżka do pliku z obrazem tabeli>,
+  "path_to_table": <str: ścieżka do pliku z obrazem tabeli>,
   "settings": {
     <
-        settings przy dodawaniu napisu są nadpisywane w głąb, w każdym 'settings'
+        settings przy dodawaniu napisu są nadpisywane w głąb, w każdym 'settings', czyli jeżeli zejdziemy do poziomu 2
+        to w settings będą z tego settings ale również nadpisane przez poziom 1 i 2, ale jak wrócimy do poziomu 2
+        to dane już bea tylko te oraz zmiany w poziomie 1
         mogą być następujące dane
     >:
-    "font_path": <ścieżka do pliku z czcionką>,
-    "font_color": <kolor zapisany w następujący sposób [0,0,0] (czarny)>
-    "max_font_size": <maksymalny rozmiar czcionki>,
-    "left": <lewa współrzędna>,
-    "top": <górna współrzędna>,
-    "width": <szerokość komórki>,
-    "height": <wysokość komórki>
+    "font_path": <str: ścieżka do pliku z czcionką>,
+    "font_color": <list[int, int, int]: kolor zapisany w następujący sposób [0,0,0] (czarny) UWAGA! Kolor w zapisie BGR>
+    "max_font_size": <int: maksymalny rozmiar czcionki>,
+    "left": <int: lewa współrzędna>,
+    "top": <int: górna współrzędna>,
+    "width": <int: szerokość komórki>,
+    "height": <int: wysokość komórki>
   },
   "subtitles": {
-    <dodawanie określonego tekstu w tym pliku>
+    <dodawanie określonego tekstu w tym pliku, czyli stłe teksty, które nie zmieniają się wraz z wynikiem>
     "settings": {},
     "cell": [
       {
         "text": <tekst który ma być dodany>,
-        "settings": {}
+        <klucze z settings>: <wartości w ustawień>
+        ...
       },... <może być nieograniczona ilość tekstów>
     ]
   },
@@ -27,8 +30,8 @@
     "settings": {},
     "players": [
       {
-        "index_team": <numer zespołu licząc od 0, jak indywidualne zawody to wszyscy są w 0>,
-        "index_player_in_team": <numer gracza w zespole licząc od 0>,
+        "index_team": <int: numer zespołu licząc od 0, jak indywidualne zawody to wszyscy są w 0>,
+        "index_player_in_team": <int: numer gracza w zespole licząc od 0>,
         "settings": {},
         "cell": {
           <rodzaj>: {<opcje z settings>}
@@ -66,7 +69,7 @@
     "settings": {},
     "teams": [
       {
-        "index_team": <numer zespołu>,
+        "index_team": <int: numer zespołu>,
         "settings": {},
         "cell": {
           <rodzaj>: {},
@@ -80,6 +83,7 @@
             - PD
             - PS
             - sum_difference
+          Rodzaje specjalne, czyli jeżeli warunek nieujemności, dodatności lub ujemności nie ejst spełniony to "":
             - sum_difference_non_negative
             - sum_difference_positive
             - sum_difference_negative

@@ -4,6 +4,8 @@ import copy
 import numpy as np
 import cv2
 import json
+import logging
+import logging_config
 from PIL import Image, ImageDraw
 from storages_of_players_results import StorageOfAllPlayersScore, _StorageOfPlayerResults
 import methods_to_draw_on_image
@@ -41,6 +43,10 @@ class _CreatingLaneTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
         if table_settings is None:
             return
         clear_table = cv2.imread(self.__table_settings["path_to_table"])
+        if clear_table is None:
+            logging.warning(f"Nie można otworzyć obrazu {self.__table_settings['path_to_table']}")
+            self.__table_settings = None
+            return
         self.__clear_image: Image.Image = Image.fromarray(clear_table)
         self.__finished_image: Image.Image = self.__crete_empty_image()
         self.__saved_data: dict = {}
@@ -195,12 +201,11 @@ class CreatingLaneTable:
         :param path_to_table_settings: ścieżka do pliku json
         :return: dict z json jak podano ścieżkę, w innym przypadku (podano błędną ścieżkę lub "") None
         """
-        if path_to_table_settings == "":
-            return None
         try:
             file = open(path_to_table_settings, encoding='utf8')
             return json.load(file)
         except FileNotFoundError:
+            logging.warning(f"Nie można odczytać ustawień tabeli z pliku {path_to_table_settings}")
             return None
 
     def set_obj_to_storages_of_players_results(self, obj_with_results: StorageOfAllPlayersScore) -> None:

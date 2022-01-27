@@ -1,0 +1,57 @@
+{
+    "path_to_table": <str: ścieżka do pliku z tabelą na wyniki pojedyśczego toru>,
+    "background_color": <list[int, int, int]: kolor tła (płótna) na kórym będą umieszczone tabele, w postaci BGR,
+    "width": <int: szerokość tła (płótna)>,
+    "height": <int: wysokość tła (płótna)>,
+    "table_coords" <zawiera współrzędne gdzie poszczególne tabele z wynikami z torów mają być na płótnie>: {
+        <str: numer toru>: {
+            "top": <int: górna współrzędna>,
+            "left": <int: dolna współrzędna>
+        }, ...
+    },
+    "cell_in_table": {
+        "settings": {
+            <
+                settings przy dodawaniu napisu są nadpisywane ustawienia, w każdym 'settings', czyli po zmianie
+                parametru X
+                ta wartość będzie już ustawiona na stałe do momentu kkolejnej zmiany
+            >:
+            "font_path": <str: ścieżka do pliku z czcionką>,
+            "font_color": <list[int, int, int]: przykłądowy kolor [255, 0, 0] (niebieski) UWAGA! Kolor w zapisie BGR>
+            "max_font_size": <int: maksymalny rozmiar czcionki>,
+            "left": <int: lewa współrzędna>,
+            "top": <int: górna współrzędna>,
+            "width": <int: szerokość komórki>,
+            "height": <int: wysokość komórki>
+        },
+        "cell": {
+            <rodzaj>: {<opcje z settings>}
+              <mogą być następujące rodzaje:
+                dotyczące nazw:
+                    - name - nazwa gracza lub po zmianie inicjał imienia i nazwisko każdego gracza
+                    - team_name - nazwa drużyny
+                dotyczące rezultatu głównego, jeżeli numer rzutu == 0 wtedy "":
+                    - suma
+                    - zbierane
+                    - pelne
+                    - number_of_rzut
+                    - dziur
+                    - PS
+                    - PD
+                dotyczące poszczególnych torów, jeżeli gracz nie oddał na tym torze rzutu to "":
+                    - "torX_Y" lub "torX_Y_Z" lub "torX_rzutN"-
+                        - X musi być nie zmieniony!!!!!!!, w tym parametrze musi być X
+                        - zamiast Y :
+                            - number_of_rzut
+                            - pelne
+                            - zbierane
+                            - dziur
+                            - suma
+                            - PS
+                        - zaminiast Z:
+                            - win
+                            - draw
+                            - lose
+        }
+    }
+}
