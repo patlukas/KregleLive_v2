@@ -1,0 +1,50 @@
+{
+  "players": [
+    {
+      "index_team": <int: numer drużyny licząc od 0>,
+      "index_player": <int: numer gracza w drużynie licząc od 0>,
+      "cells": {
+        <kind>: <str: współrzędne np "A2">,...
+            rodzaje kind:
+                1. "torX_rzutY", "torX_Z":
+                    zamiast X numer toru licząc od 1
+                    zamiast Y numer rzutu licząc od 1
+                    zamiast Z:
+                        - number_of_rzut
+                        - pelne
+                        - zbierane
+                        - dziur
+                        - suma
+                        - PS
+                2. "name", "team_name"
+                3. "name_playerX" nazwa gracza licząc od 1 który gra, jak nie było zmian to inni niż 1 będą ""
+                4. "changeX" w którym rzucie nastąpiłą X zmiana, zamiast X liczzba licząc od 1
+      }
+    }
+  ],
+  "teams": [
+    {
+      "index_team": <int: numer drużyny>,
+      "cells": {
+        <rodzaj>: <str: współrzędne np "A2">,
+          możliwe rodzaje:
+            - name
+            - suma
+            - pelne
+            - zbierane
+            - dziur
+            - number_of_rzut
+            - PD
+            - PS
+            - sum_difference
+          Rodzaje specjalne, czyli jeżeli warunek nieujemności, dodatności lub ujemności nie ejst spełniony to "":
+            - sum_difference_non_negative
+            - sum_difference_positive
+            - sum_difference_negative
+      }
+    }
+  ],
+  "other": {
+    "time": <współrzędne gdzie ma być dodana godzina edycji HH:MM:SS>
+  }
+}

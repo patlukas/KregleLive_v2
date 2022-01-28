@@ -182,8 +182,6 @@ class CreatingMainTable:
 
         :param path_to_table_settings: ścieżka do pliku json
         """
-        if path_to_table_settings == "":
-            return None
         try:
             file = open(path_to_table_settings, encoding='utf8')
             return json.load(file)

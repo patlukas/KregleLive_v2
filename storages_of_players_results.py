@@ -322,7 +322,7 @@ class _StorageOfPlayerResults:
         __update_team_result: matoda z klasy _StorageOfTeamResults do aktualizacji danych drużyny
         """
         self.list_name: list[str] = ["Patryk Ja", "Kwadd", ""]
-        self.list_when_changes: list[int] = [0]
+        self.list_when_changes: list[int] = [0, 2]
         self.team_name: str = ""
         self.__game_is_end: bool = False
         self.__update_team_result = update_team_result
