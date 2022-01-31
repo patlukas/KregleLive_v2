@@ -4,7 +4,7 @@
       "index_team": 0,
       "index_player": 0,
       "cells": {
-        "tor1_rzut1": "C1",
+        "tor1_rzut1": "F3",
         "tor1_rzut2": "C2",
         "tor1_rzut3": "C3",
         "tor1_rzut4": "C4",
@@ -30,5 +30,8 @@
   ],
   "other": {
     "time": "A2"
+  },
+  "move_columns": {
+    "number_of_columns": 11
   }
 }

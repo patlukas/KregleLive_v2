@@ -7,6 +7,9 @@ import json
 from datetime import datetime
 from storages_of_players_results import StorageOfAllPlayersScore
 
+from apiclient import discovery
+from google.oauth2 import service_account
+
 
 class ManagementGoogleSpreadsheets:
     """
@@ -35,6 +38,7 @@ class ManagementGoogleSpreadsheets:
         self.__obj_to_storage_results: StorageOfAllPlayersScore | None = obj_with_results
         self.__client: gspread.client.Client | None = self.__get_gspread_client(path_config_spreadsheets)
         self.__settings_worksheet: dict | None = self.__get_settings_worksheet(path_settings_worksheet)
+        self.__path_to_config: str = path_config_spreadsheets
         self.__spreadsheet: gspread.spreadsheet.Spreadsheet | None = None
         self.list_name_worksheet: list[str] = []
         self.__worksheet: gspread.worksheet.Worksheet | None = None
@@ -239,3 +243,92 @@ class ManagementGoogleSpreadsheets:
             if name_result == "time":
                 result = datetime.now().strftime("%H:%M:%S")
             list_to_update.append({"range": coords, "values": [[result]]})
+
+    def move_columns_to_right(self) -> bool:
+        """
+        Metoda przesuwa określoną ilość kolumn w prawo i zostawia wyczyszczone z wyników te kolumny.
+
+        :return: True - udało się, False nie udało się
+        """
+        if self.__worksheet is None or self.__spreadsheet is None or self.__settings_worksheet is None:
+            return False
+
+        try:
+            number_of_columns_to_move = self.__settings_worksheet["move_columns"]["number_of_columns"]
+        except KeyError:
+            number_of_columns_to_move = 0
+
+        if number_of_columns_to_move > 0:
+            self.__move_columns_to_right(number_of_columns_to_move)
+        self.__clear_values_from_cell()
+        return True
+
+    def __move_columns_to_right(self, number_of_columns: int) -> None:
+        """
+        Metoda kopiuje kolumny i ich zawartość i wstawia po prawej stronie od ostatniej kopiowanej kolumny.
+
+        Metoda kopiuje zawartość pierwszych number_of_columns i wstawia je w nowo utworzone kolumny. Jest tworzone
+        number_of_columns kolumn po prawej strony od kolumny o numerze number_of_columns.
+
+        :param number_of_columns: ilość kolumn do kopiowania
+        """
+        scopes = [
+            "https://www.googleapis.com/auth/drive",
+            "https://www.googleapis.com/auth/drive.file",
+            "https://www.googleapis.com/auth/spreadsheets"
+        ]
+
+        credentials = service_account.Credentials.from_service_account_file(self.__path_to_config, scopes=scopes)
+        service = discovery.build('sheets', 'v4', credentials=credentials)
+
+        batch_update = {
+            "requests": [
+                {
+                    "insertDimension": {
+                        "range": {
+                            "sheetId": self.__worksheet.id,
+                            "dimension": "COLUMNS",
+                            "startIndex": number_of_columns,
+                            "endIndex": 2*number_of_columns
+                        },
+                        "inheritFromBefore": True
+                    }
+                },
+                {
+                    "copyPaste": {
+                        "source": {
+                            "sheetId": self.__worksheet.id,
+                            "startRowIndex": 0,
+                            "startColumnIndex": 0,
+                            "endColumnIndex": number_of_columns
+                        },
+                        "destination": {
+                            "sheetId": self.__worksheet.id,
+                            "startRowIndex": 0,
+                            "startColumnIndex": number_of_columns,
+                            "endColumnIndex": number_of_columns*2
+                        },
+                        "pasteType": "PASTE_NORMAL"
+                    }
+                }
+            ]
+        }
+        request = service.spreadsheets().batchUpdate(spreadsheetId=self.__spreadsheet.id, body=batch_update)
+        request.execute()
+
+    def __clear_values_from_cell(self) -> None:
+        """Metoda kasuje wartości z komórek, które przechuwują wyniki (komórki z json)."""
+        list_to_update = []
+        for player in self.__settings_worksheet["players"]:
+            for coords in player["cells"].values():
+                list_to_update.append({"range": coords, "values": [[""]]})
+
+        for team in self.__settings_worksheet["teams"]:
+            for coords in team["cells"].values():
+                list_to_update.append({"range": coords, "values": [[""]]})
+
+        for coords in self.__settings_worksheet["other"].values():
+            list_to_update.append({"range": coords, "values": [[""]]})
+        self.__worksheet.batch_update(list_to_update)
+
+
