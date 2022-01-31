@@ -31,7 +31,5 @@
   "other": {
     "time": "A2"
   },
-  "move_columns": {
-    "number_of_columns": 11
-  }
+  "number_of_columns_to_move_right": 11
 }

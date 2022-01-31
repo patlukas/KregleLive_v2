@@ -248,13 +248,15 @@ class ManagementGoogleSpreadsheets:
         """
         Metoda przesuwa określoną ilość kolumn w prawo i zostawia wyczyszczone z wyników te kolumny.
 
-        :return: True - udało się, False nie udało się
+        :return:
+            False - nie ma połączenia z arkuszem lub skoroszytem lub nie ma dostępu do pliku json
+            True - przesunięcie udało się
         """
         if self.__worksheet is None or self.__spreadsheet is None or self.__settings_worksheet is None:
             return False
 
         try:
-            number_of_columns_to_move = self.__settings_worksheet["move_columns"]["number_of_columns"]
+            number_of_columns_to_move = self.__settings_worksheet["number_of_columns_to_move_right"]
         except KeyError:
             number_of_columns_to_move = 0
 

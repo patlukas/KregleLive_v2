@@ -47,7 +47,5 @@
   "other": {
     "time": <współrzędne gdzie ma być dodana godzina edycji HH:MM:SS>
   }
-  "move_columns": {
-    "number_of_columns": <int: o ile kolumn ma być przesunięcie w prawo>
-  }
+  "number_of_columns_to_move_right": <OPCJONALNE int: o ile kolumn ma być przesunięcie w prawo>
 }
