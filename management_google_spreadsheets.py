@@ -332,5 +332,3 @@ class ManagementGoogleSpreadsheets:
         for coords in self.__settings_worksheet["other"].values():
             list_to_update.append({"range": coords, "values": [[""]]})
         self.__worksheet.batch_update(list_to_update)
-
-
