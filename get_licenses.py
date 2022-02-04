@@ -3,6 +3,7 @@ import json
 import gspread
 import logging
 import logging_config
+import google.auth
 
 
 class GetLicenses:
@@ -73,7 +74,8 @@ class GetLicenses:
         except (
                 gspread.exceptions.NoValidUrlKeyFound,
                 gspread.exceptions.APIError,
-                gspread.exceptions.WorksheetNotFound
+                gspread.exceptions.WorksheetNotFound,
+                google.auth.exceptions.TransportError
         ):
             return None
 

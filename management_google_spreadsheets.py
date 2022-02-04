@@ -9,6 +9,7 @@ from storages_of_players_results import StorageOfAllPlayersScore
 
 from apiclient import discovery
 from google.oauth2 import service_account
+import google.auth
 
 
 class ManagementGoogleSpreadsheets:
@@ -83,17 +84,21 @@ class ManagementGoogleSpreadsheets:
                  - 1 - nie można pobrać konfiguracji klienta
                  - 2 - błędny link do arkusza
                  - 3 - klient nie ma uprawnień do edycji skoroszytu
+                 - 4 - brak połączenia z internetem
         """
         if self.__client is None:
             return 1
         try:
             self.__spreadsheet = self.__client.open_by_url(link_to_spreadsheets)
             if not self.__check_permission():
+                self.__spreadsheet = None
                 return 3
             self.__get_list_worksheet()
             return 0
         except (gspread.exceptions.NoValidUrlKeyFound, gspread.exceptions.APIError):
             return 2
+        except google.auth.exceptions.TransportError:
+            return 4
 
     def disconnecting_to_spreadsheet(self) -> None:
         """Metoda rozłącza program i skoroszyt."""
