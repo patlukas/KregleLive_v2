@@ -3,10 +3,10 @@
 import numpy as np
 import os
 import cv2
-import logging
 from typing import Union
 from datetime import datetime
-import logging_config
+
+from informing import Informing
 
 
 class _MatchedDetails:
@@ -30,7 +30,7 @@ class _MatchedDetails:
         self.__sign_new_template = sign_new_template
         self.sign = None
         self.matched = 0
-        self.on_add_template_to_sign_folder = lambda: logging.info("Nie udało się przypisać znaku!")
+        self.on_add_template_to_sign_folder = lambda: Informing.warning("Nie udało się przypisać znaku!")
         self.on_add_template_to_unrecognized_sign_folder = lambda: add_unrecognized(sign_new_template,
                                                                                     self.sign, self.matched)
 
@@ -199,7 +199,7 @@ class MatchImgToSign:
         for sign_details in self.__list_signs_details:
             if sign_details.sign == sign:
                 return sign_details.add_new_template(img_temp)
-        logging.warning(f"Znak '{sign}' nie ma swojego _SignDetails w self.__list_signs_details")
+        Informing.warning(f"Znak '{sign}' nie ma swojego _SignDetails w self.__list_signs_details")
         return False
 
     def add_new_unrecognized_temp_to_os(self, img_temp: np.ndarray, sign: Union[None, str],
@@ -227,7 +227,7 @@ class MatchImgToSign:
             np.save(f"{path}.npy", new_temp)
             return f"{path}.npy"
         except FileNotFoundError:
-            logging.warning(f"Nie można zapisać pod ścieżką '{path}'")
+            Informing.warning(f"Nie można zapisać pod ścieżką '{path}'")
             return False
 
 
@@ -280,7 +280,7 @@ class _SignDetails:
             img = np.load(f'{self.__path}/{name_file}')
             img, is_bad_size = self.__on_resize_img(img)
             if is_bad_size:
-                logging.info(f'Szablon "{self.__path}/{name_file}" ma nieodpowiednie wymiary')
+                Informing.info(f'Szablon "{self.__path}/{name_file}" ma nieodpowiednie wymiary')
             self.list_templates.append(img)
         if array_name_file:
             self.__last_index = int(array_name_file[-1].split(".")[0])
@@ -322,5 +322,5 @@ class _SignDetails:
             self.__list_added_template.append(f"{path}.npy")
             return f"{path}.npy"
         except FileNotFoundError:
-            logging.warning(f"Katalog w ścieżce '{path}' został usunięty")
+            Informing.warning(f"Katalog w ścieżce '{path}' został usunięty")
             return False
