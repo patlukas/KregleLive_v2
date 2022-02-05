@@ -1,0 +1,12 @@
+{
+  "google_sheet": {
+    "path": "https://docs.google.com/spreadsheets/d/1VIDJbQhEMoFHlWcp8_ut3QZ8FTwccHnJ5lzx9LLyLME/edit#gid=591389463",
+    "team_column": 4,
+    "name_column": 3,
+    "category_column": 5,
+    "valid_license_column": 8,
+    "where_loaned_column": 9,
+    "loan_for_what_column": 10,
+    "license_is_valid_when_there_is_text": ["TAK"]
+  }
+}

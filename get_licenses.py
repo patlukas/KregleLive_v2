@@ -40,7 +40,7 @@ class GetLicenses:
             file = open(path_to_json, encoding='utf8')
             return json.load(file)
         except FileNotFoundError:
-            logging.warning(f"Nie można odczytać ustawień licencji z pliku {path_settings_worksheet}")
+            logging.warning(f"Nie można odczytać ustawień licencji z pliku {path_to_json}")
             return None
 
     def __get_data_from_google_sheet(self, path_config_spreadsheets: str) -> list[dict] | None:
