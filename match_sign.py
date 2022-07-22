@@ -3,7 +3,6 @@
 import numpy as np
 import os
 import cv2
-from typing import Union
 from datetime import datetime
 
 from informing import Informing
@@ -30,7 +29,7 @@ class _MatchedDetails:
         self.__sign_new_template = sign_new_template
         self.sign = None
         self.matched = 0
-        self.on_add_template_to_sign_folder = lambda: Informing.warning("Nie udało się przypisać znaku!")
+        self.on_add_template_to_sign_folder = lambda: Informing().warning("Nie udało się przypisać znaku!")
         self.on_add_template_to_unrecognized_sign_folder = lambda: add_unrecognized(sign_new_template,
                                                                                     self.sign, self.matched)
 
@@ -65,7 +64,7 @@ class MatchImgToSign:
         """
         :param name_main_dir: nazwa głównego katalogu
         :param threshold_end_search: wartość przypasowania, po przekroczeniu której kończy się szukanie pasującego znaku
-        :param pa
+        :param path_unrecognized: nazwa katologu przechowującego nierozpoznane znaki
 
         Zmienne obiektu:
             :param self.__name_main_dir: (str) przechowuje nazwę głównego katalogu
@@ -96,8 +95,10 @@ class MatchImgToSign:
         """
         self.__make_dir(self.__name_main_dir)
         for number_sign in range(10):
-            self.__make_dir(f"{self.__name_main_dir}/_ {number_sign} _")
-            new_obj = _SignDetails(str(number_sign), self.__name_main_dir, self.__resize_img, self.list_added_template)
+            dir_path = f"{self.__name_main_dir}/_ {number_sign} _"
+            self.__make_dir(dir_path)
+            new_obj = _SignDetails(str(number_sign), self.__name_main_dir,
+                                   self.__resize_img, self.list_added_template, dir_path)
             self.__list_signs_details.append(new_obj)
 
     @staticmethod
@@ -187,7 +188,7 @@ class MatchImgToSign:
             return [cv2.resize(img, (30, 37), interpolation=cv2.INTER_AREA), True]
         return [img, False]
 
-    def add_new_temp_to_os(self, sign: str, img_temp: np.ndarray) -> Union[bool, str]:
+    def add_new_temp_to_os(self, sign: str, img_temp: np.ndarray) -> bool | str:
         """
         Funckja służy do dodania obrazu do systemu.
         Funkcja przeszukuje self.__list_signs_details i jeżeli znajdzie znak "sign" to przypije do niego obraz img_temp
@@ -199,11 +200,11 @@ class MatchImgToSign:
         for sign_details in self.__list_signs_details:
             if sign_details.sign == sign:
                 return sign_details.add_new_template(img_temp)
-        Informing.warning(f"Znak '{sign}' nie ma swojego _SignDetails w self.__list_signs_details")
+        Informing().error(f"Znak '{sign}' nie ma swojego _SignDetails w self.__list_signs_details")
         return False
 
-    def add_new_unrecognized_temp_to_os(self, img_temp: np.ndarray, sign: Union[None, str],
-                                        matched: float) -> Union[bool, str]:
+    def add_new_unrecognized_temp_to_os(self, img_temp: np.ndarray, sign: None | str,
+                                        matched: float) -> bool |str:
         """
         Metoda dodaje obraz znaku do folderu z nierozpoznanymi znakami.
 
@@ -227,7 +228,7 @@ class MatchImgToSign:
             np.save(f"{path}.npy", new_temp)
             return f"{path}.npy"
         except FileNotFoundError:
-            Informing.warning(f"Nie można zapisać pod ścieżką '{path}'")
+            Informing().error(f"Nie można zapisać pod ścieżką '{path}'")
             return False
 
 
@@ -240,13 +241,14 @@ class _SignDetails:
     sign: (str) nazwa znaku, czyli liczba z zakresu <0, 9>
     list_templates: (list) <np.ndarray> każdy element przedstawia jeden obraz szablonu z os
     """
-    def __init__(self, sign: str, name_main_dir: str, on_resize_img, list_added_template: list) -> None:
+    def __init__(self, sign: str, name_main_dir: str, on_resize_img, list_added_template: list, dir_path: str) -> None:
         """
         :param sign: oznaczenie znaku
         :param name_main_dir: nazwa katalogu
         :param on_resize_img: (func) funkcja służąca do ustandaryzowania wielkości obrazów, zwraca (np.ndarray, bool)
                                      gdzie 1. to obraz po zmianie, a 2. to czy była zmieniana wielkość
         :param list_added_template: <str> lista nazw dodanych obrazów
+        :param dir_path: <str> ścieżka do katalogu przechowującego szablony znaku
 
         self.sign: (str) przechowuje nazwę znaku
         self.list_templates: (list) <np.ndarray>, każdy element przedstawia jeden obraz szablonu
@@ -258,7 +260,7 @@ class _SignDetails:
         self.sign = sign
         self.list_templates = []
         self.__on_resize_img = on_resize_img
-        self.__path = f"{name_main_dir}/_ {sign} _"
+        self.__path = dir_path
         self.__last_index = 0
         self.__list_added_template = list_added_template
         self.__load_sign_from_os()
@@ -280,7 +282,7 @@ class _SignDetails:
             img = np.load(f'{self.__path}/{name_file}')
             img, is_bad_size = self.__on_resize_img(img)
             if is_bad_size:
-                Informing.info(f'Szablon "{self.__path}/{name_file}" ma nieodpowiednie wymiary')
+                Informing().info(f'Szablon "{self.__path}/{name_file}" ma nieodpowiednie wymiary')
             self.list_templates.append(img)
         if array_name_file:
             self.__last_index = int(array_name_file[-1].split(".")[0])
@@ -298,7 +300,7 @@ class _SignDetails:
         files.sort()
         return files
 
-    def add_new_template(self, new_temp: np.ndarray) -> Union[bool, str]:
+    def add_new_template(self, new_temp: np.ndarray) -> bool | str:
         """
         Funkcja dodaje nowy szablon do self.list_templates oraz do systemu operacyjnego.
 
@@ -320,7 +322,8 @@ class _SignDetails:
             cv2.imwrite(f"{path}.jpg", new_temp)
             np.save(f"{path}.npy", new_temp)
             self.__list_added_template.append(f"{path}.npy")
+            Informing().warning(f"Dodano nowy szablon znaku '{path}'")
             return f"{path}.npy"
         except FileNotFoundError:
-            Informing.warning(f"Katalog w ścieżce '{path}' został usunięty")
+            Informing().error(f"Katalog w ścieżce '{path}' został usunięty")
             return False
