@@ -97,8 +97,7 @@ class MatchImgToSign:
         for number_sign in range(10):
             dir_path = f"{self.__name_main_dir}/_ {number_sign} _"
             self.__make_dir(dir_path)
-            new_obj = _SignDetails(str(number_sign), self.__name_main_dir,
-                                   self.__resize_img, self.list_added_template, dir_path)
+            new_obj = _SignDetails(str(number_sign), self.__resize_img, self.list_added_template, dir_path)
             self.__list_signs_details.append(new_obj)
 
     @staticmethod
@@ -143,8 +142,8 @@ class MatchImgToSign:
         Funkcja wyznacza kolejność w jakiej mają być sprawdzane znaki.
 
         Funckja służy do zwrócenia listy sign_details w kolejności jaką ma sprawdzać system.
-        Funkcja sprawdza po kolei każde sign_details, jeżlei posiada chociaż jeden znak to sprawdza przypasowanie
-        pierwszego szablonu z img i dodaje dict do hierarchy. Następnie sortuje listę hierarchy weług przypasowania
+        Funkcja sprawdza po kolei każde sign_details, jeżeli posiada chociaż jeden znak to sprawdza przypasowanie
+        pierwszego szablonu z img i dodaje dict do hierarchy. Następnie sortuje listę hierarchy według przypasowania
         i zwraca listę z obiektami _SignDetails
 
         :param img: obraz znaku
@@ -182,7 +181,7 @@ class MatchImgToSign:
         Funkcja służy do ujednolicania wielkości obrazów.
 
         :param img: obraz do przeskalowania.
-        :return: lista <np.ndarray, bool> [obraz o wymiarach 30x37, czy wilekość została zmieniana]
+        :return: lista <np.ndarray, bool> [obraz o wymiarach 30x37, czy wiilkość została zmieniana]
         """
         if len(img) != 37 or len(img[0]) != 30:
             return [cv2.resize(img, (30, 37), interpolation=cv2.INTER_AREA), True]
@@ -191,9 +190,10 @@ class MatchImgToSign:
     def add_new_temp_to_os(self, sign: str, img_temp: np.ndarray) -> bool | str:
         """
         Funckja służy do dodania obrazu do systemu.
+
         Funkcja przeszukuje self.__list_signs_details i jeżeli znajdzie znak "sign" to przypije do niego obraz img_temp
 
-        :param sign: jaki znak znajduje się na obrazie
+        :param sign: jaki znak znajduje się na obrazie <wartość z przedziału 0, 9>
         :param img_temp: obraz do dodania do systemu
         :return: False - nie udało się dodać znaku, str - ścieżka do dodanego pliku
         """
@@ -234,19 +234,18 @@ class MatchImgToSign:
 
 class _SignDetails:
     """
-    Klasa przechowuje informacje o znakach oraz umożliwia dodanie nowych.
+    Klasa przechowuje informacje o znakach oraz umożliwia dodanie nowych obrazów znaków do systemu.
 
     add_new_template(np.ndarray) -> str - funckja dodaje w systemie do folderu z znakami tego typu kolejny szablon
 
     sign: (str) nazwa znaku, czyli liczba z zakresu <0, 9>
-    list_templates: (list) <np.ndarray> każdy element przedstawia jeden obraz szablonu z os
+    list_templates: (list) <np.ndarray> każdy element przedstawia jeden obraz szablonu z OS
     """
-    def __init__(self, sign: str, name_main_dir: str, on_resize_img, list_added_template: list, dir_path: str) -> None:
+    def __init__(self, sign: str, on_resize_img, list_added_template: list, dir_path: str) -> None:
         """
-        :param sign: oznaczenie znaku
-        :param name_main_dir: nazwa katalogu
+        :param sign: oznaczenie znaku (liczba z zakrezu <0, 9>)
         :param on_resize_img: (func) funkcja służąca do ustandaryzowania wielkości obrazów, zwraca (np.ndarray, bool)
-                                     gdzie 1. to obraz po zmianie, a 2. to czy była zmieniana wielkość
+                                     gdzie 1. to obraz po zmianie, a 2. to wartość bool czy była zmieniana wielkość
         :param list_added_template: <str> lista nazw dodanych obrazów
         :param dir_path: <str> ścieżka do katalogu przechowującego szablony znaku
 
@@ -289,7 +288,7 @@ class _SignDetails:
 
     def __get_list_file_name_from_path(self) -> list:
         """
-        Funkcja zwraca posortowaną listę nazw plikó z rozszerzeniem ".npy".
+        Funkcja zwraca posortowaną listę nazw plików z rozszerzeniem ".npy".
 
         Funckja przegląda folder z ścieżki self.__path oraz wybiera z niego wszystkie pliki kończące się na
         ".npy", następnie sortuje listę znalezionych nazw plików i ją zwraca
