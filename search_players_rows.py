@@ -3,7 +3,8 @@
 import numpy as np
 import cv2
 from skimage.filters import threshold_local
-from typing import Union
+
+from informing import Informing
 
 
 class _CellInRow:
@@ -40,7 +41,7 @@ class _CellInRow:
 
     def get_list_coord_x(self) -> list:
         """
-        Funkcja wraca listę gdzie każdy element odpowiada jednej komórce i jest reprezentowany przez list<int, int>,
+        Funkcja zwraca listę, gdzie każdy element odpowiada jednej komórce i jest reprezentowany przez list<int, int>,
         gdzie każda zawiera lewą i prawą współrzędną komórki.
 
         :return: list<list<int, int>>
@@ -78,7 +79,7 @@ class LookingForPlayerTables:
     """
     Klasa służy do wyznaczenia współrzędnych komórek na obrazie.
 
-    get_all_option_sequence_columns() -> list<list<int>> - zwraca listę z możliwymi do wyboru rodzajami sekwencji kolumn
+    get_list_possible_sequence_names() -> list<str> - zwraca listę z możliwymi do wyboru rodzajami sekwencji kolumn
     get_list_all_row_data_in_img() -> list<_CellInRow> - zwraca listę ze szczegółami dotyczącymi WSZYSTKICH komórek
     get_list_row_data() -> list<_CellInRow> - zwraca listę ze szczegółami dotyczącymi komórek zgodnych z sekwencją
     set_sequence_columns(list<list<int>>) -> None - funckja zmienienia self.__sequence_columns
@@ -86,12 +87,12 @@ class LookingForPlayerTables:
     drawing_cells_in_image(np.ndarray) -> np.ndarray - rysuje komórki spełniające warunki sekwencji na obrazie
     drawing_all_cells_in_image(np.ndarray) -> np.ndarray - rysuje wszystkie wykryte komórki na obrazie
     """
-    def __init__(self) -> None:
+    def __init__(self, obj_to_reading_data_from_image) -> None:
         """
         __MAX_SPACE_BETWEEN_COLUMN: (int) maksymalna odległość między wykrytymi komórkami, ta wartość jest używana przy
                                    sprawdzaniu sekwencji w funkcji self.__finding_sequence
-        __THRESHOLD_HORIZONTAL: (int) średnia wartość jaka musi być w wierszu uznać go za koniec/początek wiersza
-        __THRESHOLD_VERTICAL: (int) średnia wartość w kolumnie aby uznać ją za koniec/początek kolumny w wierszu
+        __THRESHOLD_HORIZONTAL: (int) średnia wartość (*1) jaka musi być w wierszu uznać go za koniec/początek wiersza
+        __THRESHOLD_VERTICAL: (int) średnia wartość (*1) w kolumnie aby uznać ją za koniec/początek kolumny w wierszu
         __MIN_WIDTH: (int) minimalna szerokość jaką musi mieć komórka aby dodać ją do listy
         __MIN_HEIGHT: (int) minimalna wysokość jaką musi mieć wiersz aby dodać go do listy
         __sequence_columns: (list) lista sekwencji szerokości kolumn w wierszu, zawiera liczby całkowite zaczynając od 0
@@ -99,22 +100,20 @@ class LookingForPlayerTables:
                            zbliżoną szerokość i mieć mniejszą/większą szerokość niż kolumna o numerze mniejszym/więkzym
         __list_all_row_data_in_img: (list<_CellInRow>) zawiera wszyskie wykryte komórki
         __list_row_data: (list<_CellInRow>) zawiera komórki spełniające warunki sekwencji
+        __obj_to_reading_data_from_image: ReadingDataFromImage - obiekt do odczytu danych z obrazu, tutaj ustawia
+                                                                 się mu kolumny
+        (*1) średnia wartość, czyli średnia wartość pikseli w monochromatychnym obrazie gdzie 255 to biały a 0 to czarny
         """
         self.__MAX_SPACE_BETWEEN_COLUMN = 8
         self.__THRESHOLD_HORIZONTAL = 150
-        self.__THRESHOLD_VERTICAL = 20
+        self.__THRESHOLD_VERTICAL = 50
         self.__MIN_WIDTH = 15
         self.__MIN_HEIGHT = 10
         self.__sequence_columns = [0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         self.__list_all_row_data_in_img = []
         self.__list_row_data = []
-
-    @staticmethod
-    def get_all_option_sequence_columns() -> list:
-        """Funkcja zwraca listę z możliwymi sekwencjami kolumn do wyboru."""
-        return [
-            [0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        ]
+        self.__obj_to_reading_data_from_image = obj_to_reading_data_from_image
+        self.set_sequence_columns(self.get_list_possible_sequence_names()[0])
 
     def get_list_all_row_data_in_img(self) -> list:
         """
@@ -132,9 +131,36 @@ class LookingForPlayerTables:
         """
         return self.__list_row_data
 
-    def set_sequence_columns(self, sequence_columns: list) -> None:
-        """Funkcja ustawia w obiekcie nową listę sekwencji."""
-        self.__sequence_columns = sequence_columns
+    @staticmethod
+    def get_list_possible_sequence_names() -> list:
+        """
+        Zwraca listę nazw mozliwych sekwencji kolumn.
+
+        return: list<str> lista rodzajów sekwencji kolumn.
+        """
+        return [
+            'Z kolumną "Klub" oraz bez "PR"',
+            'Bez kolumny "Klub" oraz bez "PR"'
+        ]
+
+    def set_sequence_columns(self, name_sequence_columns: str) -> bool:
+        """
+        Funkcja ustawia w obiekcie nową listę sekwencji.
+
+        return: bool - True jeżeli udało się ustawić wybraną sekwencję, False jeżeli nie udało się znaleźć sekwencji o
+                        wybranej nazwie
+        """
+        match name_sequence_columns:
+            case 'Z kolumną "Klub" oraz bez "PR"':
+                self.__sequence_columns = [0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                self.__obj_to_reading_data_from_image.update_indexes_of_columns(0, 3, 12)
+            case 'Bez kolumny "Klub" oraz bez "PR"':
+                self.__sequence_columns = [0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                self.__obj_to_reading_data_from_image.update_indexes_of_columns(0, 2, 11)
+            case _:
+                Informing().error(f"Nie istnieje sekwencja kolumn o nazwie {name_sequence_columns}.")
+                return False
+        return True
 
     def get_row_data(self, img_frame: np.ndarray) -> list[_CellInRow]:
         """
@@ -253,7 +279,7 @@ class LookingForPlayerTables:
                     array_coord.append([coord_0, coord_now + 1])
         return array_coord
 
-    def __finding_sequence(self, array_coord_x: list) -> Union[list, bool]:
+    def __finding_sequence(self, array_coord_x: list) -> list | bool:
         """
         Funkcja szukająca sekwencji współrzędnych coord_x, których szerokość spełnia sequenceColumns.
 
@@ -264,7 +290,7 @@ class LookingForPlayerTables:
         Jeżeli nie udało się znaleźć to zwraca False
 
         :param array_coord_x: list<list<int, int>> lista dwuelementowych list z początkiem i końcem kolumny
-        :return: list<list<int, int>> lista dwuelementowych list z współrzędnymi spełniającymi wymagania,
+        :return: list<list<int, int>> | False -  lista dwuelementowych list z współrzędnymi spełniającymi wymagania,
                  lub False jeżeli nie znaleziono sekwencji
         """
         len_sequence = len(self.__sequence_columns)
@@ -328,5 +354,5 @@ class LookingForPlayerTables:
         for row_data in list_row_data:
             y0, y1 = row_data.get_coord_y()
             for x0, x1 in row_data.get_list_coord_x():
-                cv2.rectangle(img, (x0, y0), (x1, y1), (0, 0, 255), 1)
+                cv2.rectangle(img, (x0, y0), (x1, y1), (0, 0, 255), 3)
         return img
