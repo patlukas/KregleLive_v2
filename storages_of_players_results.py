@@ -1,7 +1,8 @@
 """Moduł służy do przechowywania danych, wyników graczy i drużyn"""
+import math
 
-from typing import Union
 import numpy as np
+from informing import Informing
 
 from search_players_rows import _CellInRow
 
@@ -41,7 +42,7 @@ class StorageOfAllPlayersScore:
         Funkcja tworzy puste kontenery na dane.
 
         Funkcja w self.teams dodaje tyle elementów ile jest drużyn, i w każdym tworzy tyle elementów do przechowywania
-        danych graczy ile jest graczy w drużynie. Dodatkowo ustawaia zmienne obeiktu do przechowywania ile jest drużyn
+        danych graczy ile jest graczy w drużynie. Dodatkowo ustawaia zmienne obiektu do przechowywania ile jest drużyn
         i graczy w drużynie.
         """
         self.number_of_teams = number_of_team
@@ -51,6 +52,8 @@ class StorageOfAllPlayersScore:
     def calculate_league_points(self) -> bool:
         """
         Funkcja wyzncza punkty ligowe poszczególnych graczy i drużyn.
+
+        return: bool - True jeżeli zliczanie się zakończyło, False jeżeli nie ma 2 zespołów, czyli nie ma meczu ligowego
         """
         if self.number_of_teams != 2:
             return False
@@ -152,12 +155,15 @@ class _StorageOfAllTeamResults:
     Przechowuje dane drużyny: dane poszczególnych graczy i całej drużyny.
 
     Funkcja jest pośrednikiem między 'StorageOfAllPlayersScore' który przechowuje dane wszystkich drużyn,
-    a "_StorageOfTeamResults" i "_StorageOfPlayerResults" które przechowują dane albo tylko graczy albo drużyn.
+    a "_StorageOfTeamResults" i "_StorageOfPlayerResults" które przechowują dane odpowiednio graczy i drużyny.
 
-    players_results: przechowuje dane graczt
+    players_results: przechowuje dane graczy
     team_results: przechowuje dane drużyny
     """
     def __init__(self, number_of_players: int) -> None:
+        """
+        :param number_of_players <int> - liczba graczy należących do drużyny
+        """
         self.players_results: list[_StorageOfPlayerResults] = []
         self.team_results: _StorageOfTeamResults = _StorageOfTeamResults()
         for i in range(number_of_players):
@@ -179,7 +185,7 @@ class _StorageOfTeamResults:
 
     name - nazwa drużyny
     suma - zsumowany wynik
-    pelne - zsumowane pelne
+    pelne - zsumowane pełne
     zbierane - zsumowane zbierane
     dziur - zsumowana ilość rzutów wadliwych
     number_of_rzut - zsumowana ilość rzutów drużyny
@@ -233,7 +239,7 @@ class _StorageOfTeamResults:
 
     def update_team_result(self, rzut_difference: int, pelne_difference: int, zbierane_difference: int) -> None:
         """
-        Funkcja zwiększa ilość rzutów, pelne, zbierane i dziur drużyny. Otrzymuje różnicę jaką gracz ma w porównaniu
+        Funkcja zwiększa ilość rzutów, pełne, zbierane i dziur drużyny. Otrzymuje różnicę jaką gracz ma w porównaniu
         do przedostatniego rzutu.
 
         :param rzut_difference: - o ile wzrosła ilość rzutów
@@ -297,23 +303,29 @@ class _StorageOfPlayerResults:
         - wyników całego startu (ilość rzutów, pełnych, zbieranych, itp)
         - wyników na poszczególnych torach, w tablicy cztero elementowaj przechowuje oddzielnie info o każdym torze
         - wyniki z ligii
-        - współrzędne komórek należącyhc do gracza
+        - współrzędne komórek należących do gracza
 
-    get_list_pelne() -> list[int]
-    get_list_zbierane() -> list[int]
-    get_list_suma() -> list[int]
-    update_data(Union[int, None], int, int) -> None - aktualizuje wynik
+    get_list_pelne() -> list[int | None]
+    get_list_zbierane() -> list[int | None]
+    get_lists_zbierane_with_unrecognized_results_due_to_red_cards() -> list[list[int | None]]
+    get_list_suma() -> list[int | None]
+    update_data(int | None, int, int) -> None - aktualizuje wynik
     update_league_points(int, int, list<int>) -> None - aktualizuje wyniki ligowe gracza
+    get_list_red_cards() -> list<tuple<int, int>> - zwraca listę zapisanych czerwonych kartek
+    add_red_card(int, int) -> int - dodaje czerwoną kartkę do listy z kartkami
+    del_red_card(int) -> int - usuwa czerwoną kartkę z listy z kartkami
 
     list_name - lista nazw graczy (jeżeli była zmiana to aktualny gracz jest pod ustatnim indeksem)
     list_when_changes - zaiwera info w którym rzucie gracz zaczął grać
     team_name - nazwa drużyny
-    tor_number - index toru, na ktrym gra zawodnik (w Gostyniu od 1 do 6)
+    tor_number - index toru, na którym gra zawodnik (w Gostyniu od 1 do 6)
     coord_in_row - obiekt z danymi gdzie na obrazie znajdują się komórki z danymi o graczach
     number_of_tor - numer touru podczas gry (od 0 do 4) - 4 oznacza koniec gry
     number_of_rzut_in_tor - numer rzutu na torze
     result_tory - przechowuje pod każdym indeksem informacje o jednym torze
     result_main - przechowuje podsumowanie o grze
+    list_red_cards - lista dwuelementowa, gdzie pod indexem 0 jest numer rzutu, w którym gracz dostał
+                     czerwoną kartkę, a pod indexem 1 rezultat w tym rzucie
     """
     def __init__(self, update_team_result) -> None:
         """
@@ -321,14 +333,15 @@ class _StorageOfPlayerResults:
         __game_is_end: czy zawodnik zakończył już grę
         __update_team_result: matoda z klasy _StorageOfTeamResults do aktualizacji danych drużyny
         """
-        self.list_name: list[str] = ["Patryk Ja", "Kwadd", ""]
-        self.list_when_changes: list[int] = [0, 2]
+        self.list_name: list[str] = [""]
+        self.list_when_changes: list[int] = [0]
         self.team_name: str = ""
         self.__game_is_end: bool = False
         self.__update_team_result = update_team_result
-        self.tor_number: Union[int, None] = 0
+        self.tor_number: int | None = 0
         self.number_of_tor: int = 0
         self.number_of_rzut_in_tor: int = 0
+        self.list_red_cards: list[tuple[int, int]] = []
         self.result_tory: list[_StorageDataTor] = [
             _StorageDataTor(),
             _StorageDataTor(),
@@ -394,32 +407,58 @@ class _StorageOfPlayerResults:
     def get_name_playing_player(self) -> str:
         """
         Metoda zwraca nazwę aktualnie grającego gracza.
+
+        return: <str> - nazwa zawodnika, który aktualnie gra
         """
         return self.list_name[-1]
 
-    def get_list_pelne(self) -> list[Union[None, int]]:
+    def get_list_pelne(self) -> list[None | int]:
         """Zwraca listę z wynikami osiągniętymi w pełnych."""
         list_pelne = []
         for tor in self.result_tory:
             list_pelne += tor.list_pelne
         return list_pelne
 
-    def get_list_zbierane(self) -> list[Union[None, int]]:
+    def get_list_zbierane(self) -> list[None | int]:
         """Zwraca listę z wynikami osiągniętymi w zbieranych."""
         list_zbierane = []
         for tor in self.result_tory:
             list_zbierane += tor.list_zbierane
         return list_zbierane
 
-    def get_list_suma(self) -> list[Union[None, int]]:
+    def get_lists_zbierane_with_unrecognized_results_due_to_red_cards(self) -> list[list[None | int]]:
+        """
+        Zwraca listę 4-elementową, z której każdy element zawiera listę wyników zbieranych na poszczególnych torach.
+
+        return: list<4xlist<int|None>>
+        """
+        lists_zbierane = []
+        for tor in self.result_tory:
+            lists_zbierane.append(tor.list_zbierane)
+        for nr_throw, unrecognized_result in self.list_red_cards:
+            nr_tor = math.floor((nr_throw-1) / 30)
+            nr_throw_in_tor = (nr_throw-1) % 30
+            nr_throw_in_tor -= 15
+            if nr_throw_in_tor < 0:
+                continue
+            throw_result = lists_zbierane[nr_tor][nr_throw_in_tor]
+            if throw_result != 0:
+                Informing().warning(f"Została zgłoszona czerwona kartka w {nr_throw} rzucie, a we wskazanym rzucie "
+                                    f"został zarejestrowany wynik {throw_result} zbitych kręgli!")
+            else:
+                lists_zbierane[nr_tor][nr_throw_in_tor] = unrecognized_result
+
+        return list_results
+
+    def get_list_suma(self) -> list[None | int]:
         """Zwraca listę z wynikami osiągniętymi w całej grze."""
         list_pelne = []
         for tor in self.result_tory:
             list_pelne += tor.get_list_suma()
         return list_pelne
 
-    def update_data(self, tor_number: Union[str, None] = "", number_of_rzut_in_tor: Union[str, None] = "",
-                    result_player: Union[str, None] = "0") -> int:
+    def update_data(self, tor_number: None | str = "", number_of_rzut_in_tor: None | str = "",
+                    result_player: None | str = "0") -> int:
         """
         Funkcja do aktualizacji danych.
 
@@ -433,6 +472,7 @@ class _StorageOfPlayerResults:
             return -1
         if tor_number is None or number_of_rzut_in_tor is None or result_player is None \
                 or number_of_rzut_in_tor == "" or result_player == "":
+            Informing().warning(f"Nie udało się odczytać wyników gracza {self.get_name_playing_player()}")
             return -2
 
         tor_number = (None if tor_number == "" else int(tor_number))
@@ -440,6 +480,15 @@ class _StorageOfPlayerResults:
         result_player = int(result_player)
 
         result_in_last_rzut = result_player - self.result_main.suma
+
+        if result_in_last_rzut < 0 or result_in_last_rzut > 9:
+            text = f"Zawodnikowi {self.get_name_playing_player()} wzrósł wynik o {str(result_in_last_rzut)}"
+            text += f" z {self.result_main.suma} na {result_player}"
+            Informing().warning(text)
+        if number_of_rzut_in_tor == 0 and 0 < self.number_of_rzut_in_tor < 30:
+            text = f"Zawodnik {self.get_name_playing_player()} skończył tor po {str(self.number_of_rzut_in_tor)} rzucie"
+            Informing().warning(text)
+
         rzut_now = self.number_of_tor*30 + self.number_of_rzut_in_tor
         self.tor_number = tor_number
         if number_of_rzut_in_tor == 0 and self.number_of_rzut_in_tor != 0:
@@ -450,8 +499,12 @@ class _StorageOfPlayerResults:
         if self.number_of_tor == 4:
             self.__game_is_end = True
             return -1
+        rzut_difference = self.number_of_tor * 30 + number_of_rzut_in_tor - rzut_now
+        if rzut_difference < 0 or rzut_difference > 1:
+            text = f"Zawodnikowi {self.get_name_playing_player()} wzrósł numer rzutu o {str(rzut_difference)}"
+            text += f" z {rzut_now} na {rzut_now + rzut_difference}"
+            Informing().warning(text)
         if number_of_rzut_in_tor:
-            rzut_difference = self.number_of_tor*30 + number_of_rzut_in_tor - rzut_now
             if number_of_rzut_in_tor <= 15:
                 self.__update_team_result(rzut_difference, result_in_last_rzut, 0)
             else:
@@ -484,6 +537,7 @@ class _StorageOfPlayerResults:
         Możliwe statystyki:
             1. Nazwy:
                 - name - nazwa gracza lub po zmianie inicjał imienia i nazwisko każdego gracza
+                - name_now_playing_player - nazwa aktualnie grającego gracza
                 - team_name - nazwa drużyny
             2. Główne wyniki (jeżeli numer rzutu == 0 wtedy ""):
                 suma, zbierane, pelne, number_of_rzut, dziur, PS, PD
@@ -505,6 +559,8 @@ class _StorageOfPlayerResults:
         player_lanes_results = self.result_tory
         if name_result == "name":
             return self.get_all_name_to_string()
+        if name_result == "name_now_playing_player":
+            return self.get_name_playing_player()
         try:
             if name_result[:3] == "tor":
                 index_tor = int(name_result[3]) - 1
@@ -528,6 +584,68 @@ class _StorageOfPlayerResults:
             return ""
         except IndexError:
             return ""
+
+    def get_list_red_cards(self) -> list[tuple[int, int]]:
+        """
+        Metoda zwraca zapisaną listę z czerwonymi kartkami.
+
+        rerun: lista dwuelementowych danych zawierających numer rzutu, w którym była kartka i nieuznana wartość
+        """
+        return self.list_red_cards
+
+    def add_red_card(self, nr_throw: int, unrecognized_result: int) -> int:
+        """
+        Metoda dodaje czerwoną kartkę.
+
+        :param nr_throw: <int> numer rzutu w którym była kartka
+        :param unrecognized_result: <int> wynik rzutu, który nie został uznany
+
+        return:
+             3 - we wskazanym rzucie gracz ma zapisany inny rezultat niż 0
+             2 - była kartka we wskazanym rzucie, ale inna wartość
+             1 - już jest dodana kartka w tym rzucie ze wskazaną wartością
+             0 - nie było zapisanej jeszcze takiej kartki
+            -1 - niewłaściwy numer rzutu
+            -2 - niewłaściwy wynik rzutu
+        """
+        return_value = 0
+        if nr_throw < 1 or nr_throw > 120:
+            Informing().warning(f"Dodawanie czerwonej kartki - niewłaściwy numer rzutu: {nr_throw}")
+            return -1
+        if unrecognized_result < 0 or unrecognized_result > 9:
+            Informing().warning(f"Dodawanie czerwonej kartki - niewłaściwy wynik rzutu: {nr_throw}")
+            return -2
+        for i, [saved_nr_throw, saved_unrecognized_result] in self.list_red_cards:
+            if saved_nr_throw == nr_throw:
+                if saved_unrecognized_result == unrecognized_result:
+                    Informing().warning(f"Dodawanie czerwonej kartki - już jest taka kartka: {nr_throw}")
+                    return 1
+                else:
+                    Informing().warning(f"Dodawanie czerwonej kartki - była kartka w rzucie {nr_throw}, ale z inną "
+                                        f"wartością {saved_unrecognized_result}")
+                    self.list_red_cards.pop(i)
+                    return_value = 2
+                    break
+        result_in_indicated_throw = self.get_list_suma()[nr_throw]
+        if result_in_indicated_throw != 0:
+            Informing().warning(f"Dodawanie czerwonej kartki - w rzucie {nr_throw}, gracz strącił "
+                                f" {result_in_indicated_throw} kręgli")
+            return_value = 3
+        self.list_red_cards.append(tuple((nr_throw, unrecognized_result)))
+        return return_value
+
+    def del_red_card(self, nr_throw: int) -> bool:
+        """
+        Metoda usuwa czerwoną kartkę, która zostałą zapisana w określonym rzucie.
+
+        :param nr_throw: <int> numer rzutu z którego ma być usunięta kartka
+        return: <bool> True - udało się usunąć, False - nie było takiej kartki
+        """
+        for i, [saved_nr_throw, _] in self.list_red_cards:
+            if saved_nr_throw == nr_throw:
+                self.list_red_cards.pop(i)
+                return True
+        return False
 
 
 class _StorageDataBasic:
@@ -596,8 +714,8 @@ class _StorageDataTor:
         self.dziur: int = 0
         self.suma: int = 0
         self.PS: float = 0
-        self.list_pelne: list[Union[None, int]] = [None] * 15
-        self.list_zbierane: list[Union[None, int]] = [None] * 15
+        self.list_pelne: list[None | int] = [None] * 15
+        self.list_zbierane: list[None | int] = [None] * 15
 
     def __repr__(self) -> str:
         return f"""
@@ -631,6 +749,6 @@ class _StorageDataTor:
         if new_value == 0:
             self.dziur += 1
 
-    def get_list_suma(self) -> list[Union[None, int]]:
+    def get_list_suma(self) -> list[None | int]:
         """Funkcja zwraca listę 30 elementów zawierającą poszczególne rzuty z pełnych i zbieranych."""
         return self.list_pelne + self.list_zbierane
