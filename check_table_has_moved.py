@@ -1,9 +1,8 @@
-"Moduł odpowiada za wykrywanie przesunięcia tablicy z wynikami."
+"Moduł odpowiada za wykrywanie czy tabela z wynikami zostałą przesunięta."
 
 from search_players_rows import _CellInRow
 import cv2
 import numpy as np
-from typing import Union
 
 
 class CheckTableHasMoved:
@@ -13,10 +12,10 @@ class CheckTableHasMoved:
     Kolejność sprawdzania:
         klasa sprawdza czy w miejscu w którym ma być nazwa gracza (prawdopodobnie kolumna o indexie 1)
         znajduje się doklądnie to samo co jest zapisane w pamięci obiektu. Jeżeli wartości się róźnią
-        to zostaje zwrócony False.
+        to zostaje zwrócony True.
 
-        W zamyśle po zwróceniu przez obiekt wartości False (zmienił się układ) funkcja wywołująca metodę
-        pwinna wykryć ponownie komórki na obrazie i wywołać funkcję w tym obiekcie, aby zaaktualizować listę
+        W zamyśle po zwróceniu przez obiekt wartości True (zmieniło się połozenie tabeli) funkcja wywołująca metodę
+        powinna wykryć ponownie komórki na obrazie i wywołać funkcję w tym obiekcie, aby zaaktualizować listę
         listę wyciętych komórk, które są potrzebne do sprawdzania.
 
         check_table_has_moved(np.ndarrau) -> bool - funckja sprawdza czy wycięte komórki są nadal takie same
@@ -48,12 +47,10 @@ class CheckTableHasMoved:
         if len(self.__list_row_details) != len(self.__list_cutted_cells):
             return True
         if len(self.__list_row_details) == 0:
-            print("Lista z szczegółami o wierszach jest pusta")
             return True
         for i, row_details in enumerate(self.__list_row_details):
             img_to_check = row_details.get_cell(img, self.__index_column)
             result = cv2.matchTemplate(img_to_check, self.__list_cutted_cells[i], cv2.TM_CCOEFF_NORMED)
-            print(cv2.minMaxLoc(result)[1])
             if cv2.minMaxLoc(result)[1] < 0.95:
                 return True
         return False
