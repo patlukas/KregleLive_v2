@@ -42,10 +42,11 @@
       "max_font_size": 14
     },
     "players": [
-      {
+       {
         "index_team": 0,
         "index_player_in_team": 0,
         "settings": {
+          "top": 48,
           "width": 34
         },
         "cell": {
@@ -53,76 +54,65 @@
             "left": 20,
             "width": 150
           },
-          "tor1_suma": {},
           "tor1_suma_win": {
             "left": 170,
             "width": 36,
             "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 0, 150]
           },
           "tor2_suma_win": {
             "left": 206,
             "width": 36,
             "font_color": [0, 150, 0]
           },
-          "tor3_suma": {},
-          "tor4_suma": {
-            "left": 278,
-            "width": 36
-          },
-          "number_of_throw": {
-            "left": 314,
-            "width": 32
-          },
-          "pelne": {
-            "left": 346
-          },
-          "zbierane": {
-            "left": 380
-          },
-          "dziur": {
-            "left": 414,
-            "width": 20
-          },
-          "suma": {
-            "left": 434
-          },
-          "PS": {
-            "left": 468,
-            "width": 30
-          },
-          "PD": {
-            "left": 499,
-            "width": 23
-          }
-        }
-      },
-       {
-        "index_team": 1,
-        "index_player_in_team": 0,
-        "settings": {
-          "top": 38,
-          "width": 34
-        },
-        "cell": {
-          "name": {
-            "left": 20,
-            "width": 150
-          },
-          "tor1_suma": {},
-          "tor1_suma_win": {
-            "left": 170,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor2_suma_win": {
+          "tor2_suma_draw": {
             "left": 206,
             "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 242,
+            "width": 36,
             "font_color": [0, 150, 0]
           },
-          "tor3_suma": {},
-          "tor4_suma": {
+          "tor3_suma_draw": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
             "left": 278,
-            "width": 36
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 0, 150]
           },
           "number_of_throw": {
             "left": 314,
@@ -155,7 +145,7 @@
         "index_team": 0,
         "index_player_in_team": 1,
         "settings": {
-          "top": 53,
+          "top": 64,
           "width": 34
         },
         "cell": {
@@ -163,76 +153,65 @@
             "left": 20,
             "width": 150
           },
-          "tor1_suma": {},
           "tor1_suma_win": {
             "left": 170,
             "width": 36,
             "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 0, 150]
           },
           "tor2_suma_win": {
             "left": 206,
             "width": 36,
             "font_color": [0, 150, 0]
           },
-          "tor3_suma": {},
-          "tor4_suma": {
-            "left": 278,
-            "width": 36
-          },
-          "number_of_throw": {
-            "left": 314,
-            "width": 32
-          },
-          "pelne": {
-            "left": 346
-          },
-          "zbierane": {
-            "left": 380
-          },
-          "dziur": {
-            "left": 414,
-            "width": 20
-          },
-          "suma": {
-            "left": 434
-          },
-          "PS": {
-            "left": 468,
-            "width": 30
-          },
-          "PD": {
-            "left": 499,
-            "width": 23
-          }
-        }
-      },
-       {
-        "index_team": 1,
-        "index_player_in_team": 1,
-        "settings": {
-          "top": 78,
-          "width": 34
-        },
-        "cell": {
-          "name": {
-            "left": 20,
-            "width": 150
-          },
-          "tor1_suma": {},
-          "tor1_suma_win": {
-            "left": 170,
-            "width": 36,
-            "font_color": [0, 150, 0]
-          },
-          "tor2_suma_win": {
+          "tor2_suma_draw": {
             "left": 206,
             "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 242,
+            "width": 36,
             "font_color": [0, 150, 0]
           },
-          "tor3_suma": {},
-          "tor4_suma": {
+          "tor3_suma_draw": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
             "left": 278,
-            "width": 36
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 0, 150]
           },
           "number_of_throw": {
             "left": 314,
@@ -265,7 +244,7 @@
         "index_team": 0,
         "index_player_in_team": 2,
         "settings": {
-          "top": 93,
+          "top": 79,
           "width": 34
         },
         "cell": {
@@ -273,21 +252,65 @@
             "left": 20,
             "width": 150
           },
-          "tor1_suma": {},
           "tor1_suma_win": {
             "left": 170,
             "width": 36,
             "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 0, 150]
           },
           "tor2_suma_win": {
             "left": 206,
             "width": 36,
             "font_color": [0, 150, 0]
           },
-          "tor3_suma": {},
-          "tor4_suma": {
+          "tor2_suma_draw": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
             "left": 278,
-            "width": 36
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 0, 150]
           },
           "number_of_throw": {
             "left": 314,
@@ -317,10 +340,10 @@
         }
       },
        {
-        "index_team": 1,
-        "index_player_in_team": 2,
+        "index_team": 0,
+        "index_player_in_team": 3,
         "settings": {
-          "top": 108,
+          "top": 94,
           "width": 34
         },
         "cell": {
@@ -328,21 +351,263 @@
             "left": 20,
             "width": 150
           },
-          "tor1_suma": {},
           "tor1_suma_win": {
             "left": 170,
             "width": 36,
             "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 0, 150]
           },
           "tor2_suma_win": {
             "left": 206,
             "width": 36,
             "font_color": [0, 150, 0]
           },
-          "tor3_suma": {},
-          "tor4_suma": {
+          "tor2_suma_draw": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
             "left": 278,
-            "width": 36
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "number_of_throw": {
+            "left": 314,
+            "width": 32
+          },
+          "pelne": {
+            "left": 346
+          },
+          "zbierane": {
+            "left": 380
+          },
+          "dziur": {
+            "left": 414,
+            "width": 20
+          },
+          "suma": {
+            "left": 434
+          },
+          "PS": {
+            "left": 468,
+            "width": 30
+          },
+          "PD": {
+            "left": 499,
+            "width": 23
+          }
+        }
+      },
+       {
+        "index_team": 0,
+        "index_player_in_team": 4,
+        "settings": {
+          "top": 109,
+          "width": 34
+        },
+        "cell": {
+          "name": {
+            "left": 20,
+            "width": 150
+          },
+          "tor1_suma_win": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor2_suma_win": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor2_suma_draw": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "number_of_throw": {
+            "left": 314,
+            "width": 32
+          },
+          "pelne": {
+            "left": 346
+          },
+          "zbierane": {
+            "left": 380
+          },
+          "dziur": {
+            "left": 414,
+            "width": 20
+          },
+          "suma": {
+            "left": 434
+          },
+          "PS": {
+            "left": 468,
+            "width": 30
+          },
+          "PD": {
+            "left": 499,
+            "width": 23
+          }
+        }
+      },
+       {
+        "index_team": 0,
+        "index_player_in_team": 5,
+        "settings": {
+          "top": 124,
+          "width": 34
+        },
+        "cell": {
+          "name": {
+            "left": 20,
+            "width": 150
+          },
+          "tor1_suma_win": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 170,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor2_suma_win": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor2_suma_draw": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 206,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 242,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 278,
+            "width": 36,
+            "font_color": [0, 0, 150]
           },
           "number_of_throw": {
             "left": 314,
