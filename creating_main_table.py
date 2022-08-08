@@ -4,11 +4,10 @@ import copy
 import numpy as np
 import cv2
 import json
-import logging
-import logging_config
 from PIL import Image
 from storages_of_players_results import StorageOfAllPlayersScore, _StorageOfPlayerResults
 import methods_to_draw_on_image
+from informing import Informing
 
 
 class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImage):
@@ -36,7 +35,7 @@ class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
             return
         clear_image = cv2.imread(self.__table_settings["path_to_table"])
         if clear_image is None:
-            logging.warning(f"Nie można otworzyć obrazu {self.__table_settings['path_to_table']}")
+            Informing().error(f"Nie można otworzyć obrazu {self.__table_settings['path_to_table']}")
             self.__table_settings = None
             return
         self.__clear_image: Image.Image = Image.fromarray(clear_image)
@@ -73,7 +72,7 @@ class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
 
             index_team, index_player = player_details["index_team"], player_details["index_player_in_team"]
             saved_data = {}
-            player_id = str(index_team) + "|" + str(index_player)
+            player_id = f"{index_team}|{index_player}"
             if player_id in self.__saved_data["players"].keys():
                 saved_data = self.__saved_data["players"][player_id]
 
@@ -127,8 +126,7 @@ class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
         :param text: tekst do wpisania
         :param settings: ustawiania czcionki, rozmiaru komórki
         """
-        font_size, font_path = settings["max_font_size"], settings["font_path"]
-        font_color = settings["font_color"]
+        font_size, font_path, font_color = settings["max_font_size"], settings["font_path"], settings["font_color"]
         left, top, width, height = settings["left"], settings["top"], settings["width"], settings["height"]
 
         cell = self.__clear_image.crop((left, top, left + width, top + height))
@@ -167,9 +165,9 @@ class CreatingMainTable:
         :param path_to_table_settings: ścieżka do ustawień tabeli
         :param obj_with_results: obiekt z wynikami
 
-        __table_settings: ustawienia tabeli lub None jaknie podano ścieżki
+        __table_settings: ustawienia tabeli lub None jeżeli nie podano ścieżki
         __obj_to_storage_results: obeikt z wynikami graczy i drużyn lub None
-        __obj_to_create_table: oniekt do tworzenia tabeli
+        __obj_to_create_table: obiekt do tworzenia tabeli
         """
         self.__table_settings: dict | None = self.__get_table_settings(path_to_table_settings)
         self.__obj_to_storage_results: None | StorageOfAllPlayersScore = obj_with_results
@@ -186,12 +184,12 @@ class CreatingMainTable:
             file = open(path_to_table_settings, encoding='utf8')
             return json.load(file)
         except FileNotFoundError:
-            logging.warning(f"Nie można odczytać ustawień tabeli z pliku {path_to_table_settings}")
+            Informing().error(f"Nie można odczytać ustawień tabeli z pliku {path_to_table_settings}")
             return None
 
     def set_obj_to_storages_of_players_results(self, obj_with_results: StorageOfAllPlayersScore) -> None:
         """
-        Metoda aktualizuje obiekt z przechowujący wyniki graczy i drużyn.
+        Metoda aktualizuje obiekt przechowujący wyniki graczy i drużyn.
 
         :param obj_with_results: nowy obiekt z wynikami
         """
@@ -202,7 +200,7 @@ class CreatingMainTable:
         """
         Metoda aktualizuje ustawienia tabeli.
 
-        :param path_to_table_settings: ścieżka do nowego pliku json z ustawieniami tabei
+        :param path_to_table_settings: ścieżka do nowego pliku json z ustawieniami tabeli
         """
         self.__table_settings = self.__get_table_settings(path_to_table_settings)
         self.__obj_to_create_table = _CreatingMainTableDrawResults(self.__obj_to_storage_results, self.__table_settings)
