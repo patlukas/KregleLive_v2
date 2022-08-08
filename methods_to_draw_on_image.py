@@ -4,7 +4,7 @@ from PIL import ImageFont, ImageDraw, Image
 
 class MethodsToDrawOnImage:
     """
-    Klasa z głównymi metodami do tworzenia tabel.
+    Klasa z głównymi metodami do wypełniania  tabel.
 
     draw_center_text_in_cell(Image.Image, str|int|float, int, str, tuple|list, int, int) -> Image.Image - zwraca obraz
                                                                                         komórki z wyśrodkowanym napisem
@@ -42,7 +42,7 @@ class MethodsToDrawOnImage:
         Zwraca obraz komórki z dodanym wyśrodkowanym w pionie i poziomi napisem.
 
         :param img_cell: obraz komórki
-        :param text: napis który ma być dodany
+        :param text: napis, który ma być dodany do komórki
         :param font_size: maksymalny rozmiar czcionki, jak się nie zmieści napis to rozmiar zostanie zmniejszony
         :param font_path: ścieżka do czcionki
         :param color: kolor czcionki zapisany w postaci (B, G, R)
@@ -50,14 +50,11 @@ class MethodsToDrawOnImage:
         :param height: wysokość komórki
         :return: komórka z dodanym wyśrodkowanym napisem
         """
-        if type(text) != str:
-            text = str(text)
+        text = str(text)
         if text == "":
             return img_cell
-        if type(color) == list:
-            color = tuple(color)
-        if type(font_size) != int:
-            font_size = int(font_size)
+        color = tuple(color)
+        font_size = int(font_size)
 
         draw = ImageDraw.Draw(img_cell)
         while True:
