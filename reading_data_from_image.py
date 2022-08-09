@@ -1,10 +1,7 @@
-"""
-Moduł odpowiedzialny za odczyt aktualnych danych z obrazu, dokładniej informacji o numerze toru, rzutu i wyniku.
-"""
+"""Moduł odpowiedzialny za odczyt aktualnych danych z obrazu, dokładniej informacji o numerze toru, rzutu i wyniku."""
 import numpy as np
 from search_players_rows import _CellInRow
 from reading_numbers_from_cell import ReadingNumbersFromCell
-from typing import Union, Tuple
 
 
 class ReadingDataFromImage:
@@ -17,6 +14,18 @@ class ReadingDataFromImage:
     """
     def __init__(self, obj_to_read_number_from_cell: ReadingNumbersFromCell,
                  column_with_lane: int, column_with_throws: int, column_with_result: int):
+        """
+        :param obj_to_read_number_from_cell: obiekt który umożliwia odczytywanie wartości z komórki
+        :param column_with_lane: numer kolumny w tabeli gdzie znajduje się numer toru, na którym  gra zawodnik
+        :param column_with_throws: numer kolumny w tabeli gdzie znajduje się numer rzutu zawodnika
+        :param column_with_result: numer kolumny w tabeli gdzie znajduje się rezultat zawodnika
+
+        __obj_to_read_number_from_cell: obiekt który umożliwia odczytywanie wartości z komórki
+        __column_with_lane: numer kolumny w tabeli gdzie znajduje się numer toru, na którym  gra zawodnik
+        __column_with_throw: numer kolumny w tabeli gdzie znajduje się numer rzutu zawodnika
+        __column_with_result: numer kolumny w tabeli gdzie znajduje się rezultat zawodnika
+        __list_row_data: lista z obiektami _CellInRow, zawierającymi szczegółowe informacje o wierszach
+        """
         self.__obj_to_read_number_from_cell: ReadingNumbersFromCell = obj_to_read_number_from_cell
         self.__column_with_lane: int = column_with_lane
         self.__column_with_throw: int = column_with_throws
@@ -37,17 +46,16 @@ class ReadingDataFromImage:
 
     def update_list_row_data(self, new_list_row_data: list[_CellInRow]) -> None:
         """
-        Metoda aktualizuje listę ze informacjami o poszczególnych wierszach.
+        Metoda aktualizuje listę z informacjami o poszczególnych wierszach.
 
-        :param new_list_row_data: lista z obiektami _CellInRow, zaiwerającymi szczegółowe informacje o wierszach
+        :param new_list_row_data: lista z obiektami _CellInRow, zawierającymi szczegółowe informacje o wierszach
         """
         self.__list_row_data = new_list_row_data
 
-    def read_data_from_row(self, img: np.ndarray,
-                           index_of_row: int) -> tuple[Union[int, None], Union[int, None], Union[int, None]]:
+    def read_data_from_row(self, img: np.ndarray, index_of_row: int) -> tuple[int | None, int | None, int | None]:
 
         """
-        Moduł służący do oczytu danych znajduących się w 3 kolumnach u gracza który ma swoje dane w podanym wierszu.
+        Moduł służący do doczytu danych znajduących się w 3 kolumnach u gracza który ma swoje dane w podanym wierszu.
 
         :param img: obraz(klatka) z tabelami do odczytu
         :param index_of_row: numer wiersza z którego mają być odczytane dane
