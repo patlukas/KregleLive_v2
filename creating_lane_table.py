@@ -4,11 +4,10 @@ import copy
 import numpy as np
 import cv2
 import json
-import logging
-import logging_config
 from PIL import Image, ImageDraw
 from storages_of_players_results import StorageOfAllPlayersScore, _StorageOfPlayerResults
 import methods_to_draw_on_image
+from informing import Informing
 
 
 class _CreatingLaneTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImage):
@@ -21,12 +20,12 @@ class _CreatingLaneTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
     def __init__(self, obj_with_results: StorageOfAllPlayersScore | None, table_settings: dict | None) -> None:
         """
         :param obj_with_results: obiekt z wynikami graczy i drużyn
-        :param table_settings: odczytany z json dane w jaki sposób ma być uzupełniona tabela
+        :param table_settings: odczytane z json dane w jaki sposób ma być uzupełniona tabela
 
         __obj_with_results: obiekt z wynikami graczy i drużyn
-        __table_settings: odczytany z json dane w jaki sposób ma być uzupełniona tabela
+        __table_settings: odczytane z json dane w jaki sposób ma być uzupełniona tabela
         __clear_image: czysty obraz tabeli pojedyńczego toru
-        __finished_image: obraz tabeli do wyświetlenia (nie pojdyńczego toru, ale wszystkie x tabel)
+        __finished_image: obraz tabeli do wyświetlenia (nie pojdyńczego toru, ale wszystkie tabel)
         __saved_data: zawiera informacje jakie dane są zapisane na __finished_image
 
             Struktura słownika __saved_data:
@@ -44,7 +43,7 @@ class _CreatingLaneTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
             return
         clear_table = cv2.imread(self.__table_settings["path_to_table"])
         if clear_table is None:
-            logging.warning(f"Nie można otworzyć obrazu {self.__table_settings['path_to_table']}")
+            Informing().error(f"Nie można otworzyć obrazu {self.__table_settings['path_to_table']}")
             self.__table_settings = None
             return
         self.__clear_image: Image.Image = Image.fromarray(clear_table)
@@ -57,10 +56,9 @@ class _CreatingLaneTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
 
         :return: jednokolorowy obraz o wymiarach i kolorze określony w json (szablon do wklejania tabel)
         """
-        width, height = self.__table_settings["width"], self.__table_settings["height"]
-        background_color = self.__table_settings["background_color"]
-        if type(background_color) == list:
-            background_color = tuple(background_color)
+        width = self.__table_settings["width"]
+        height = self.__table_settings["height"]
+        background_color = tuple(self.__table_settings["background_color"])
         return Image.new("RGB", (width, height), background_color)
 
     def __get_dict_players_now_playing(self) -> dict:
@@ -99,9 +97,8 @@ class _CreatingLaneTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
         """
         Metoda wypisuje aktualne wyniki graczy, aktualizuje tylko te komórki gdzie wystąpiła zmiana.
 
-        :param dict_players_now_playing: słownik w którym ma indexy int licząc od 1 i jeżeli istanieje index to
+        :param dict_players_now_playing: słownik w którym ma indeksy int licząc od 1 i jeżeli istanieje index to
                                         oznacza że na danym torze ktoś gra i pod tym indexem jest obiekt z jego wynikami
-
 
         Uwagi: Podczas pobierania wyniku gracza jest zamianiany X na numer bieżącego toru, ponieważ w json jest wpisane
                 torX_rzut1 lub torX_suma, aby w prosty sposób można było odczytać aktualny wynik
@@ -144,9 +141,13 @@ class _CreatingLaneTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
         :param settings: ustawiania czcionki, rozmiaru komórki
         """
         img = copy.copy(img)
-        font_size, font_path = settings["max_font_size"], settings["font_path"]
+        font_size = settings["max_font_size"]
+        font_path = settings["font_path"]
         font_color = settings["font_color"]
-        left, top, width, height = settings["left"], settings["top"], settings["width"], settings["height"]
+        left = settings["left"]
+        top = settings["top"]
+        width = settings["width"]
+        height = settings["height"]
 
         cell = self.__clear_image.crop((left, top, left + width, top + height))
         cell = self.draw_center_text_in_cell(cell, text, font_size, font_path, font_color, width, height)
@@ -161,8 +162,8 @@ class _CreatingLaneTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
         Zapisuje z głównych ustawieniach te ustawiania które są w new_default_values i zwraca słownik.
 
         :param main_default_values: słownik z wszystkimi ustawianiami (niżej w hierarchi ważności)
-        :param new_default_values: słownik ze zmienami w ustawieniach (ważniejszy w hierarchii)
-        :return: zmodyfikowany słownik main_default_values o wartości z new_default_values
+        :param new_default_values: słownik ze zmianami w ustawieniach (ważniejszy w hierarchii)
+        :return: zmodyfikowany słownik main_default_values o wartościach z new_default_values
         """
         values = copy.deepcopy(main_default_values)
         for key, value in new_default_values.items():
@@ -205,12 +206,12 @@ class CreatingLaneTable:
             file = open(path_to_table_settings, encoding='utf8')
             return json.load(file)
         except FileNotFoundError:
-            logging.warning(f"Nie można odczytać ustawień tabeli z pliku {path_to_table_settings}")
+            Informing().error(f"Nie można odczytać ustawień tabeli z pliku {path_to_table_settings}")
             return None
 
     def set_obj_to_storages_of_players_results(self, obj_with_results: StorageOfAllPlayersScore) -> None:
         """
-        Metoda aktualizuje obiekt z przechowujący wyniki graczy i drużyn.
+        Metoda aktualizuje obiekt przechowujący wyniki graczy i drużyn.
 
         :param obj_with_results: nowy obiekt z wynikami
         """
@@ -221,7 +222,7 @@ class CreatingLaneTable:
         """
         Metoda aktualizuje ustawienia tabeli.
 
-        :param path_to_table_settings: ścieżka do nowego pliku json z ustawieniami tabei
+        :param path_to_table_settings: ścieżka do nowego pliku json z ustawieniami tabel
         """
         self.__table_settings = self.__get_table_settings(path_to_table_settings)
         self.__obj_to_create_table = _CreatingLaneTableDrawResults(self.__obj_to_storage_results, self.__table_settings)
