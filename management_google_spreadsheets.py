@@ -1,12 +1,10 @@
 """Moduł odpowiedzialny za zapisywanie wyników do arkusza kalkulacyjnego od Google."""
 
 import gspread
-import logging
-import logging_config
 import json
 from datetime import datetime
 from storages_of_players_results import StorageOfAllPlayersScore
-
+from informing import Informing
 from apiclient import discovery
 from google.oauth2 import service_account
 import google.auth
@@ -24,10 +22,12 @@ class ManagementGoogleSpreadsheets:
     set_obj_to_storages_of_players_results(StorageOfAllPlayersScore) -> None - aktualizuje obiekt z wynikami graczy
     update_data_in_worksheet() -> int - aktualizuje wartości w arkuszu
     """
-    def __init__(self, path_config_spreadsheets: str, path_settings_worksheet: str,
-                 obj_with_results: StorageOfAllPlayersScore | None = None):
+    def __init__(self, path_config_spreadsheets: str, obj_with_results: StorageOfAllPlayersScore | None = None):
         """
-        __obj_to_storage_results - obikt przechowujący wyniki/nazwy graczy i drużyn lub None jak nie podano obiektu
+        Przed edycją arkusza należy ustawić self.__settings_worksheet przy pomocy metody
+        set_new_settings_worksheet_by_path_to_json
+
+        __obj_to_storage_results - obiekt przechowujący wyniki/nazwy graczy i drużyn lub None jak nie podano obiektu
         __client - obiekt "klient" do łączenia się z arkuszami, ten użytkownik musi mieć prawo edycji dokumentu, może
                     być wartość None jeżeli nie udało się pobrać danych o kliencie z pliku
         __settings_worksheet - ustawienia arkusza z wynikami, czyli gdzie się znajdują komórki z jakimi danymi
@@ -38,9 +38,10 @@ class ManagementGoogleSpreadsheets:
         """
         self.__obj_to_storage_results: StorageOfAllPlayersScore | None = obj_with_results
         self.__client: gspread.client.Client | None = self.__get_gspread_client(path_config_spreadsheets)
-        self.__settings_worksheet: dict | None = self.__get_settings_worksheet(path_settings_worksheet)
+        self.__settings_worksheet = None
         self.__path_to_config: str = path_config_spreadsheets
         self.__spreadsheet: gspread.spreadsheet.Spreadsheet | None = None
+        self.name_spreadsheet: str = ""
         self.list_name_worksheet: list[str] = []
         self.__worksheet: gspread.worksheet.Worksheet | None = None
         self.__saved_players_data_in_worksheet: dict = {}
@@ -48,7 +49,7 @@ class ManagementGoogleSpreadsheets:
     @staticmethod
     def __get_gspread_client(path_config_spreadsheets: str) -> gspread.Client | None:
         """
-        Metoda próbuje pobrać ustawienia klienta połączenia i stworzyć jego obiekt, inaczej None
+        Metoda próbuje pobrać ustawienia klienta połączenia i stworzyć jego obiekt, jeżeli się nie uda to zwróci None.
 
         :param path_config_spreadsheets: ścieżka do json z konfiguracją klienta
         :return: obiekt klienta - jak udało się połączć, None jak połączenie się nie udało
@@ -56,7 +57,7 @@ class ManagementGoogleSpreadsheets:
         try:
             return gspread.service_account(filename=path_config_spreadsheets)
         except FileNotFoundError:
-            logging.warning(f"Nie znaleziono pliku z konfiguracją klienta {path_config_spreadsheets}")
+            Informing().error(f"Nie znaleziono pliku z konfiguracją klienta {path_config_spreadsheets}")
             return None
 
     @staticmethod
@@ -65,13 +66,13 @@ class ManagementGoogleSpreadsheets:
         Metoda pobiera ustawienia arkusza z pliku json.
 
         :param path_settings_worksheet: ścieżka do ustawień arkusza (w jakiej komórce mają znajdować się jakie wyniki)
-        :return: dict - po pomyślnym załadowaniu danych, None jak nie znaleziono pliku
+        :return: dict - po pomyślnym załadowaniu danych, None - jak nie znaleziono pliku
         """
         try:
             file = open(path_settings_worksheet, encoding='utf8')
             return json.load(file)
         except FileNotFoundError:
-            logging.warning(f"Nie można odczytać ustawień arkusza z pliku {path_settings_worksheet}")
+            Informing.error(f"Nie można odczytać ustawień arkusza z pliku {path_settings_worksheet}")
             return None
 
     def connecting_to_spreadsheet_by_link(self, link_to_spreadsheets: str) -> int:
@@ -93,6 +94,7 @@ class ManagementGoogleSpreadsheets:
             if not self.__check_permission():
                 self.__spreadsheet = None
                 return 3
+            self.name_spreadsheet = self.__spreadsheet.title
             self.__get_list_worksheet()
             return 0
         except (gspread.exceptions.NoValidUrlKeyFound, gspread.exceptions.APIError):
@@ -103,7 +105,9 @@ class ManagementGoogleSpreadsheets:
     def disconnecting_to_spreadsheet(self) -> None:
         """Metoda rozłącza program i skoroszyt."""
         self.__spreadsheet = None
+        self.name_spreadsheet = ""
         self.list_name_worksheet = []
+        self.disconnecting_to_worksheet()
 
     def __check_permission(self) -> bool:
         """
@@ -132,8 +136,8 @@ class ManagementGoogleSpreadsheets:
         """
         Metoda do połączenia się z arkuszem o wybranej nazwie ze skoroszytu z którym jest obiekt połączony.
 
-        :param name_worksheet: nazwa arkusza z którym użytkownik chce się połączyć i ktoóry chce edytować
-        :return: True jeżeli udało się z arkuszem, False jeżeli wystąpił problem
+        :param name_worksheet: nazwa arkusza z którym użytkownik chce się połączyć i który chce edytować
+        :return: True jeżeli udało się połączyć z arkuszem, False jeżeli wystąpił problem
         """
         if self.__spreadsheet is None:
             return False
@@ -152,6 +156,14 @@ class ManagementGoogleSpreadsheets:
         self.__worksheet = None
         self.__saved_players_data_in_worksheet = {}
         return self.list_name_worksheet
+
+    def set_settings_worksheet_by_path_to_json(self, path_to_json_with_worksheet_settings: str) -> None:
+        """
+        Metoda aktualizuje (pobiera plik json) ustawienia arkusza.
+
+        :param path_to_json_with_worksheet_settings: ścieżka do pliku json z ustawieniami arkusza
+        """
+        self.__settings_worksheet = self.__get_settings_worksheet(path_to_json_with_worksheet_settings)
 
     def set_obj_to_storages_of_players_results(self, obj_with_results: StorageOfAllPlayersScore) -> None:
         """
@@ -189,13 +201,14 @@ class ManagementGoogleSpreadsheets:
 
     def __update_players_results(self, list_to_update: list[dict]) -> None:
         """
-        Metoda do wyznaczenia komórek których wartości należy uaktualnić.
+        Metoda do wyznaczenia komórek z wynikami i nazwami graczy, których wartości należy uaktualnić.
 
         :param list_to_update: lista słowników zawierających współrzędne komórek i ich nowe wartości
         """
         saved_players_data = self.__saved_players_data_in_worksheet.get("players", {})
         for i, player in enumerate(self.__settings_worksheet["players"]):
-            index_team, index_player = player["index_team"], player["index_player"]
+            index_team = player["index_team"]
+            index_player = player["index_player"]
             saved_player_data = saved_players_data.get(i, {})
             obj_player = self.__obj_to_storage_results.teams[index_team].players_results[index_player]
 
@@ -220,7 +233,7 @@ class ManagementGoogleSpreadsheets:
 
     def __update_teams_results(self, list_to_update: list[dict]) -> None:
         """
-        Metoda do wyznaczenia komórek których wartości należy uaktualnić.
+        Metoda do wyznaczenia komórek z wynikami i nazwami drużyn, których wartości należy uaktualnić.
 
         :param list_to_update: lista słowników zawierających współrzędne komórek i ich nowe wartości
         """
@@ -239,7 +252,7 @@ class ManagementGoogleSpreadsheets:
 
     def __update_other_data(self, list_to_update: list[dict]) -> None:
         """
-        Metoda do wyznaczenia komórek których wartości należy uaktualnić.
+        Metoda do wyznaczenia komórek nie z danymi graczy i drużyn, których wartości należy uaktualnić.
 
         :param list_to_update: lista słowników zawierających współrzędne komórek i ich nowe wartości
         """
