@@ -1,11 +1,10 @@
-"""
-Moduł odpowiedzialny za zwrócenie wartości jaka jest zapisana w komórce.
-"""
+"""Moduł odpowiedzialny za zwrócenie wartości jaka jest zapisana w komórce."""
+
 import numpy as np
 from datetime import datetime
-from typing import Union
 import match_sign
 import cv2
+from informing import Informing
 
 
 class ReadingNumbersFromCell:
@@ -23,10 +22,10 @@ class ReadingNumbersFromCell:
         :param path_dict_with_unrecognized_sign: ścieżka do katalogu z nierozpoznanymi znakami
         :param path_dict_with_unrecognized_cell: ścieżka do katalogu z nierozpoznanymi komórkami
         :param path_dict_with_unrecognized: ścieżka do katalogu z nierozpoznanymi znakami
-        :param threshold_end_search: próg po przekroczeniu którego uznaje się że został znak rozpoznany
-        :param threshold_save_to_dict_with_sign: jeżeli został przekrocony threshold_end_search, a ten nie zostanie to
-                                                 obraz zostanie zapisany w katalogu z rozpoznanym znakiem
-        :param threshold_save_as_unrecognized: jeżeli nie zostanie przekroczony ten próg to znak zostanie z dodany
+        :param threshold_end_search: próg po przekroczeniu którego uznaje się, że znak został rozpoznany
+        :param threshold_save_to_dict_with_sign: jeżeli został przekrocony threshold_end_search, a ta wartość nie
+                                                 zostanie, to obraz zostanie zapisany w katalogu z rozpoznanym znakiem
+        :param threshold_save_as_unrecognized: jeżeli nie zostanie przekroczony ten próg to znak zostanie dodany
                                                do katalogu z nierozpoznanymi znakami
 
         Hierarchia progów:
@@ -42,12 +41,16 @@ class ReadingNumbersFromCell:
         self.__threshold_save_to_dict_with_sign = threshold_save_to_dict_with_sign
         self.__threshold_save_as_unrecognized = threshold_save_as_unrecognized
 
-    def __read_number_from_list_sign(self, list_sign: list[np.ndarray]) -> Union[str, None]:
+    def __read_number_from_list_sign(self, list_sign: list[np.ndarray]) -> str | None:
         """
-        Metoda odczytuje po kolei zawartość (cyfrę) każdego elementu elementu tablicy obrazów znaków.
+        Metoda odczytuje po kolei zawartość (cyfrę) każdego elementu tablicy obrazów znaków.
 
         :param list_sign: lista obrazów znaków
         :return: None jeżeli nie rozpoznano jakiegoś znaku, str jeżeli wszystko ok, jeżeli brak znaków to zwróci ""
+            Przykładowe zwracane wartości z wyjaśnieniem:
+                - None - nie rozpoznano znaku lub znaków w komórce
+                - "" - nie ma cyfry w odczytywanej komórce
+                - "0" - "999" - wartość odczytana z komórki
         """
         list_digit_details = []
         for sign in list_sign:
@@ -69,7 +72,7 @@ class ReadingNumbersFromCell:
         """
         Metoda dodaje obraz komórki do folderu z nierozpoznanymi komórkami.
 
-        Zostaje dodany plik  do folderu pod ścieżką self.__path_dict_with_unrecognized_cell.
+        Zostaje dodany plik do folderu pod ścieżką self.__path_dict_with_unrecognized_cell.
         Dodany plik w nazwie będzie miał aktualną datę.
 
         :param img_cell: obraz nierozpoznanego znaku
@@ -80,15 +83,15 @@ class ReadingNumbersFromCell:
             cv2.imwrite(f"{path}.jpg", img_cell)
             np.save(f"{path}.npy", img_cell)
         except FileNotFoundError:
-            logging.warning(f"Nie można zapisać pod ścieżką '{path}'")
+            Informing().warning(f"Nie można zapisać obrazu pod ścieżką '{path}'")
 
-    def read_number_from_one_digit_cell(self, img_cell: np.ndarray) -> Union[str, None]:
+    def read_number_from_one_digit_cell(self, img_cell: np.ndarray) -> str | None:
         """
         Odczyt numeru z komórki zawierającej jedną cyfrę.
 
-        Taka komórka to ta zawierająca dane na którym torze gra gracz.
+        Taka komórka to np. ta zawierająca informacje o numerze toru, na którym gra zawodnik.
         :param img_cell: obraz komórki
-        :return: None jeżeli nie udało nie rozpoznać jakiegoś znaku, str jeżeli wszsytko się udało, jeżeli w komórce nie
+        :return: None jeżeli nie udało nie rozpoznać jakiegoś znaku, str jeżeli wszystko się udało, jeżeli w komórce nie
                  było liczby to zwrócone zostanie ""
         """
         array_sign = self.__cut_signs_from_cell(img_cell, 1)
@@ -97,11 +100,11 @@ class ReadingNumbersFromCell:
             self.__save_cell_to_dict_with_unrecognized_cell(img_cell)
         return result
 
-    def read_number_from_three_digits_cell(self, img_cell: np.ndarray):
+    def read_number_from_three_digits_cell(self, img_cell: np.ndarray) -> str | None:
         """
         Odczyt numeru z komórki zawierającej trzy cyfry.
 
-        Taka komórka to ta zawierająca numer rzutu gracza i jego wynik.
+        Metoda służy do odczytu numeru rzutu lub wyniku gracza, bo te komórki zawierają miejsce na 3 cyfry.
         :param img_cell: obraz komórki
         :return: None jeżeli nie udało nie rozpoznać jakiegoś znaku, str jeżeli wszsytko się udało, jeżeli w komórce nie
                  było liczby to zwrócone zostanie ""
@@ -117,7 +120,9 @@ class ReadingNumbersFromCell:
         Metoda odpowiedzialna za wydzielenie z obrazu komórki obrazów ze znakami.
 
         Dla każdej number_of_signs są inne podziały według tabeli sign_partition.
-        W pewnym momencie rozmiar znaku jest zmieniany na 28x35, aby po dodaniu białego obramowania miał wymiar 30x37
+        Wyjaśnienie:
+            Rozmiar znaku jest zmieniany na 28x35, aby po dodaniu białego obramowania miał wymiar 30x37.
+
         :param img_cell: obraz komórki
         :param number_of_signs: maksymalna liczba cyfr w komórce
         :return: zwraca listę z wyciętymi znakami
@@ -147,7 +152,8 @@ class ReadingNumbersFromCell:
     @staticmethod
     def __max_rgb_filter(image: np.ndarray) -> np.ndarray:
         """
-        Metoda zwraca przekształcony obraz z BGR tak że poszczególne pixele będą największą wartością z tych 3 wartości.
+        Metoda przekształca obraz z BGR, tak że poszczególne pixele będą największą wartością z tych 3 wartości.
+
         :param image: obraz do przekształcenia
         :return: przekształcony obraz
         """
@@ -158,7 +164,8 @@ class ReadingNumbersFromCell:
     @staticmethod
     def __remove_black_line(img_cell: np.ndarray, cut_vertical: bool) -> np.ndarray:
         """
-        Metoda zamienia linie poziome(!cut_vertical)/ pionowe(cut_vertical) na białe, jeżeli są białe w mniej niż 20%.
+        Metoda zamienia linie poziome(!cut_vertical) / pionowe(cut_vertical) na białe, jeżeli są białe w mniej niż 20%.
+
         :param img_cell: obraz jednowymiarowy do przekształcenia
         :param cut_vertical: czy zamiana poziomych linii (False) czy pionowych(True)
         :return: obraz po przekształceniu
@@ -175,11 +182,11 @@ class ReadingNumbersFromCell:
     @staticmethod
     def __cut_signs(img: np.ndarray, cut_vertical: bool, min_space: int = 5) -> list[np.ndarray]:
         """
-        Metoda dzieląca obraz w poszukiwaniu znaków
+        Metoda dzieląca obraz w poszukiwaniu znaków.
 
         :param img: obraz komórki
-        :param cut_vertical: jeżeli True to poszukiwane są znami w pionie (obrót o 90 potem 270) jak False to w poziomie
-        :param min_space: minimalna różnoca między coord_0 a coord_1
+        :param cut_vertical: jeżeli True to poszukiwane są znaki w pionie (obrót o 90 potem 270) jak False to w poziomie
+        :param min_space: minimalna różnoca między coord_0 a coord_1 (minimalna szerokość lub wysokość znaku)
         :return: zwraca tablicę ze znalezionymi znakami
         """
         if cut_vertical:
