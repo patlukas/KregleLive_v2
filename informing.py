@@ -1,4 +1,5 @@
 """Moduł odpowiedzialny za zarządzanie błędami i informajami jakie ma dostać użytkownik."""
+
 from datetime import datetime
 
 
@@ -22,7 +23,11 @@ class Informing:
 
     @staticmethod
     def __get_time() -> str:
-        """Metoda zwraca napis zawierający bieżącą datę z dokłądnością do sekundy."""
+        """
+        Metoda zwraca napis zawierający bieżącą datę z dokładnością do sekundy.
+
+        return: <str> aktualna data z dokładnością do sekundy
+        """
         return datetime.now().strftime("%H:%M:%S %d.%m.%y")
 
     def __write(self, new_line: str) -> None:
