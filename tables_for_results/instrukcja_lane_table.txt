@@ -29,6 +29,7 @@
               <mogą być następujące rodzaje:
                 dotyczące nazw:
                     - name - nazwa gracza lub po zmianie inicjał imienia i nazwisko każdego gracza
+                    - name_now_playing_player - nazwa aktualnie grającego gracza
                     - team_name - nazwa drużyny
                 dotyczące rezultatu głównego, jeżeli numer rzutu == 0 wtedy "":
                     - suma

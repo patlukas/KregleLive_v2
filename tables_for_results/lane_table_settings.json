@@ -133,6 +133,11 @@
       },
       "torX_rzut30": {
         "left": 53
+      },
+      "name_now_playing_player": {
+        "top": 2,
+        "left": 2,
+        "width": 120
       }
     }
   }

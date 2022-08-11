@@ -75,6 +75,7 @@
           <rodzaj>: {},
           możliwe rodzaje:
             - name
+            - name_now_playing_player - nazwa aktualnie grającego gracza
             - suma
             - pelne
             - zbierane
