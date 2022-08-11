@@ -1,0 +1,26 @@
+{
+  "Liga 6-osobowa": {
+    "type": "league",
+    "number_of_team": 2,
+    "number_of_player_in_team": 6,
+    "number_of_changes": 2,
+    "affiliation_of_players_to_teams": [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+    "list_category": ["Senior", "Junior", "Junior Młodszy"],
+    "name_of_game": "superliga mężczyzn",
+    "tables_for_results": "tables_for_results/six_player_league.json",
+    "tables_for_lane_results": "tables_for_results/lane_table_settings.json",
+    "google_spreadsheets": "spreadsheets/settings_google_spreadsheet_to_result.json"
+  },
+  "Liga 4-osobowa": {
+    "type": "league",
+    "number_of_team": 2,
+    "number_of_player_in_team": 4,
+    "number_of_changes": 1,
+    "affiliation_of_players_to_teams": [0, 0, -1, 0, 0, -1, 1, 1, -1, 1, 1, -1],
+    "list_category": ["Junior", "Junior Młodszy"],
+    "name_of_game": "superliga mężczyzn",
+    "tables_for_results": "tables_for_results/six_player_league.json",
+    "tables_for_lane_results": "tables_for_results/lane_table_settings.json",
+    "google_spreadsheets": "spreadsheets/settings_google_spreadsheet_to_result.json"
+  }
+}
