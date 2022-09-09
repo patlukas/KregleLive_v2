@@ -81,9 +81,12 @@ class CreatingSummaryTables(MethodsToDrawOnImage):
                 list_player_stat.append(self.__get_player_stat(player))
             team_name = team.team_results.name
             self.__statistic_players.append(
-                {"team": self.__get_team_stat(team_name, list_player_stat), "players": list_player_stat}
+                {
+                    "team": self.__get_team_stat(team_name, list_player_stat, team.team_results.PD),
+                    "players": list_player_stat
+                }
             )
-        return self.__statistic_players
+        return
 
     @staticmethod
     def __get_player_stat(player_results: _StorageOfPlayerResults) -> dict:
@@ -204,12 +207,13 @@ class CreatingSummaryTables(MethodsToDrawOnImage):
         return player_stat
 
     @staticmethod
-    def __get_team_stat(team_name: str, list_player_stat: list[dict]) -> dict:
+    def __get_team_stat(team_name: str, list_player_stat: list[dict], team_pd: float) -> dict:
         """
         Metoda sumuje statystyki graczy drużyny i zwraca je w słowniku
 
         :param team_name: <string> nazwa drużyny
         :param list_player_stat: lista słowników ze statystykami graczy
+        :param team_pd: ilość zdobytych punktów drużynowych przez drużynę
         retrun: słownik z sumaowanymi wynikami drużyny, w słowniku są następujące dane:
             {
                 name: <string> nazwa drużyny
@@ -234,7 +238,7 @@ class CreatingSummaryTables(MethodsToDrawOnImage):
         team_stat = {
             "name": team_name,
             "PS": 0,
-            "PD": 0,
+            "PD": team_pd,
             "suma": 0,
             "pelne": 0,
             "zbierane": 0,
@@ -248,7 +252,7 @@ class CreatingSummaryTables(MethodsToDrawOnImage):
             "rozklad_all": {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
         }
         for player_stat in list_player_stat:
-            for key in ["PS", "PD", "suma", "pelne", "zbierane", "dziur"]:
+            for key in ["PS", "suma", "pelne", "zbierane", "dziur"]:
                 team_stat[key] += player_stat[key]
             for key in ["rozklad_w_ile_uklad", "rozklad_co_po_9", "rozklad_pelne", "rozklad_rozbicia", "rozklad_all"]:
                 for i in team_stat[key].keys():
