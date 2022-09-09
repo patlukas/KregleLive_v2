@@ -1,0 +1,5 @@
+{
+  "path_to_font": "tables_for_results/fonts/MerriweatherSans.ttf",
+  "path_to_save_current_statistics": "statistic/current_statistics/",
+  "path_to_save_historical_statistics": "statistic/historical_statistics/"
+}

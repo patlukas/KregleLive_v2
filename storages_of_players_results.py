@@ -447,8 +447,7 @@ class _StorageOfPlayerResults:
                                     f"został zarejestrowany wynik {throw_result} zbitych kręgli!")
             else:
                 lists_zbierane[nr_tor][nr_throw_in_tor] = unrecognized_result
-
-        return list_results
+        return lists_zbierane
 
     def get_list_suma(self) -> list[None | int]:
         """Zwraca listę z wynikami osiągniętymi w całej grze."""

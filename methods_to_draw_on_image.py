@@ -72,3 +72,97 @@ class MethodsToDrawOnImage:
         y = (height - h) // 2
         draw.text((x, y), text, font=font, fill=color)
         return img_cell
+
+    def draw_center_text_by_coord(self, img: Image.Image, text: str | int | float, font_size: int,
+                                  font_path: str, color: tuple | list,
+                                  coords: list[int, int, int, int] | tuple[int, int, int, int]) -> Image.Image:
+        """
+        Zwraca obraz komórki z dodanym wyśrodkowanym w pionie i poziomi napisem.
+
+        :param img: obraz komórki
+        :param text: napis, który ma być dodany do komórki
+        :param font_size: maksymalny rozmiar czcionki, jak się nie zmieści napis to rozmiar zostanie zmniejszony
+        :param font_path: ścieżka do czcionki
+        :param color: kolor czcionki zapisany w postaci (B, G, R)
+        :param coords: współrzędne, kolejno lewa, prawa, górna, dolna
+        :return: komórka z dodanym wyśrodkowanym napisem
+        """
+        return self.__draw_text_by_coord("center", img, text, font_size, font_path, color, coords)
+
+    def draw_left_text_by_coord(self, img: Image.Image, text: str | int | float, font_size: int,
+                                  font_path: str, color: tuple | list,
+                                  coords: list[int, int, int, int] | tuple[int, int, int, int]) -> Image.Image:
+        """
+        Zwraca obraz komórki z dodanym wyjustowany do lewej krawędzi i wypoziomowany napisem.
+
+        :param img: obraz komórki
+        :param text: napis, który ma być dodany do komórki
+        :param font_size: maksymalny rozmiar czcionki, jak się nie zmieści napis to rozmiar zostanie zmniejszony
+        :param font_path: ścieżka do czcionki
+        :param color: kolor czcionki zapisany w postaci (B, G, R)
+        :param coords: współrzędne, kolejno lewa, prawa, górna, dolna
+        :return: komórka z dodanym wyśrodkowanym napisem
+        """
+        return self.__draw_text_by_coord("left", img, text, font_size, font_path, color, coords)
+
+    def draw_right_text_by_coord(self, img: Image.Image, text: str | int | float, font_size: int,
+                                 font_path: str, color: tuple | list,
+                                 coords: list[int, int, int, int] | tuple[int, int, int, int]) -> Image.Image:
+        """
+        Zwraca obraz komórki z dodanym wyjustowany do lewej krawędzi i wypoziomowany napisem.
+
+        :param img: obraz komórki
+        :param text: napis, który ma być dodany do komórki
+        :param font_size: maksymalny rozmiar czcionki, jak się nie zmieści napis to rozmiar zostanie zmniejszony
+        :param font_path: ścieżka do czcionki
+        :param color: kolor czcionki zapisany w postaci (B, G, R)
+        :param coords: współrzędne, kolejno lewa, prawa, górna, dolna
+        :return: komórka z dodanym wyśrodkowanym napisem
+        """
+        return self.__draw_text_by_coord("right", img, text, font_size, font_path, color, coords)
+
+    def __draw_text_by_coord(self, kind_position: str, img: Image.Image, text: str | int | float, font_size: int,
+                             font_path: str, color: tuple | list,
+                             coords: list[int, int, int, int] | tuple[int, int, int, int]) -> Image.Image:
+        """
+        Zwraca obraz komórki z dodanym wyjustowany do lewej krawędzi i wypoziomowany napisem.
+
+        :param kind_position: jak ma być ułożony tekst: right/center/left
+        :param img: obraz komórki
+        :param text: napis, który ma być dodany do komórki
+        :param font_size: maksymalny rozmiar czcionki, jak się nie zmieści napis to rozmiar zostanie zmniejszony
+        :param font_path: ścieżka do czcionki
+        :param color: kolor czcionki zapisany w postaci (B, G, R)
+        :param coords: współrzędne, kolejno lewa, prawa, górna, dolna
+        :return: komórka z dodanym wyśrodkowanym napisem
+        """
+        text = str(text)
+        if text == "":
+            return img
+        color = tuple(color)
+        font_size = int(font_size)
+
+        width = coords[1] - coords[0]
+        height = coords[3] - coords[2]
+
+        draw = ImageDraw.Draw(img)
+        while True:
+            try:
+                font = self.__get_font(font_path, font_size)
+            except OSError:
+                return img_cell
+            w, h = draw.textsize(text, font=font)
+            if w <= width and h <= height:
+                break
+            font_size -= 1
+            if font_size <= 0:
+                break
+        if kind_position == "right":
+            x = coords[1] - w
+        elif kind_position == "center":
+            x = (width - w) // 2 + coords[0]
+        else:
+            x = coords[0]
+        y = (height - h) // 2 + coords[2]
+        draw.text((x, y), text, font=font, fill=color)
+        return img
