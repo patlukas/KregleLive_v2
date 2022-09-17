@@ -539,7 +539,7 @@ class _StorageOfPlayerResults:
                 - name_now_playing_player - nazwa aktualnie grającego gracza
                 - team_name - nazwa drużyny
             2. Główne wyniki (jeżeli numer rzutu == 0 wtedy ""):
-                suma, zbierane, pelne, number_of_rzut, dziur, PS, PD
+                suma, zbierane, pelne, numberofrzut, dziur, PS, PD
             3. Wyniki na torach (jeżeli gracz nie oddał na tym torze rzutu to ""):
                 - "torX_Y" lub "torX_Y_Z"-
                     - zamiast X numer <1,4>
@@ -563,8 +563,11 @@ class _StorageOfPlayerResults:
         try:
             if name_result[:3] == "tor":
                 index_tor = int(name_result[3]) - 1
+                name_result = name_result.replace("number_of_rzut", "numberofrzut")
                 list_word = name_result.split("_")
                 kind = list_word[1]
+                if kind == "numberofrzut":
+                    kind = "number_of_rzut"
                 if player_lanes_results[index_tor].number_of_rzut == 0:
                     return ""
                 if kind[:4] == "rzut":

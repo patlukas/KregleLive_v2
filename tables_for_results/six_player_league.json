@@ -11,27 +11,146 @@
   },
   "subtitles": {
     "settings": {
-      "top": 50,
-      "height": 25
+      "top": 33,
+      "height": 15,
+      "max_font_size": 12
     },
     "cell": [
       {
-        "text": "Pełne",
-        "top": 20
+        "text": "Nazwisko i Imię",
+        "left": 19,
+        "width": 150
       },
       {
-        "text": "Zbierane",
-        "font_color": [0,0,0],
-        "left": 100,
-        "width": 100
+        "text": "Tor 1",
+        "left": 169,
+        "width": 36
+      },
+      {
+        "text": "Tor 2",
+        "left": 205,
+        "width": 36
+      },
+      {
+        "text": "Tor 3",
+        "left": 241,
+        "width": 36
+      },
+      {
+        "text": "Tor 4",
+        "left": 277,
+        "width": 36
+      },
+      {
+        "text": "Rzut",
+        "left": 314,
+        "width": 31
+      },
+      {
+        "text": "P",
+        "left": 346,
+        "width": 34
+      },
+      {
+        "text": "Z",
+        "left": 380,
+        "width": 34
+      },
+      {
+        "text": "X",
+        "left": 414,
+        "width": 20
+      },
+      {
+        "text": "Suma",
+        "left": 435,
+        "width": 34
+      },
+      {
+        "text": "PS",
+        "left": 467,
+        "width": 32
+      },
+      {
+        "text": "PD",
+        "left": 498,
+        "width": 23
+      },
+      {
+        "text": "Nazwisko i Imię",
+        "left": 1110,
+        "width": 150
+      },
+      {
+        "text": "Tor 1",
+        "left": 1074,
+        "width": 36
+      },
+      {
+        "text": "Tor 2",
+        "left": 1038,
+        "width": 36
+      },
+      {
+        "text": "Tor 3",
+        "left": 1002,
+        "width": 36
+      },
+      {
+        "text": "Tor 4",
+        "left": 966,
+        "width": 36
+      },
+      {
+        "text": "Rzut",
+        "left": 934,
+        "width": 31
+      },
+      {
+        "text": "P",
+        "left": 900,
+        "width": 34
+      },
+      {
+        "text": "Z",
+        "left": 866,
+        "width": 34
+      },
+      {
+        "text": "X",
+        "left": 846,
+        "width": 20
+      },
+      {
+        "text": "Suma",
+        "left": 812,
+        "width": 34
+      },
+      {
+        "text": "PS",
+        "left": 781,
+        "width": 32
+      },
+      {
+        "text": "PD",
+        "left": 758,
+        "width": 23
       },
       {
         "text": ":",
         "left": 637,
         "width": 6,
-        "top": 103,
-        "height": 35,
+        "top": 110,
+        "height": 21,
         "max_font_size": 35
+      },
+      {
+        "text": "WYNIK",
+        "left": 560,
+        "width": 160,
+        "top": 95,
+        "height": 15,
+        "max_font_size": 20
       }
     ]
   },
@@ -114,7 +233,7 @@
             "width": 36,
             "font_color": [0, 0, 150]
           },
-          "number_of_throw": {
+          "number_of_rzut": {
             "left": 314,
             "width": 32
           },
@@ -213,7 +332,7 @@
             "width": 36,
             "font_color": [0, 0, 150]
           },
-          "number_of_throw": {
+          "number_of_rzut": {
             "left": 314,
             "width": 32
           },
@@ -312,7 +431,7 @@
             "width": 36,
             "font_color": [0, 0, 150]
           },
-          "number_of_throw": {
+          "number_of_rzut": {
             "left": 314,
             "width": 32
           },
@@ -411,7 +530,7 @@
             "width": 36,
             "font_color": [0, 0, 150]
           },
-          "number_of_throw": {
+          "number_of_rzut": {
             "left": 314,
             "width": 32
           },
@@ -510,7 +629,7 @@
             "width": 36,
             "font_color": [0, 0, 150]
           },
-          "number_of_throw": {
+          "number_of_rzut": {
             "left": 314,
             "width": 32
           },
@@ -609,7 +728,7 @@
             "width": 36,
             "font_color": [0, 0, 150]
           },
-          "number_of_throw": {
+          "number_of_rzut": {
             "left": 314,
             "width": 32
           },
@@ -635,11 +754,609 @@
             "width": 23
           }
         }
+      },
+
+      {
+        "index_team": 1,
+        "index_player_in_team": 0,
+        "settings": {
+          "top": 48,
+          "width": 34
+        },
+        "cell": {
+          "name": {
+            "left": 1110,
+            "width": 150
+          },
+          "tor1_suma_win": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor2_suma_win": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor2_suma_draw": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "number_of_rzut": {
+            "left": 934,
+            "width": 32
+          },
+          "pelne": {
+            "left": 900
+          },
+          "zbierane": {
+            "left": 866
+          },
+          "dziur": {
+            "left": 846,
+            "width": 20
+          },
+          "suma": {
+            "left": 812
+          },
+          "PS": {
+            "left": 781,
+            "width": 30
+          },
+          "PD": {
+            "left": 758,
+            "width": 23
+          }
+        }
+      },
+      {
+        "index_team": 1,
+        "index_player_in_team": 1,
+        "settings": {
+          "top": 63,
+          "width": 34
+        },
+        "cell": {
+          "name": {
+            "left": 1110,
+            "width": 150
+          },
+          "tor1_suma_win": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor2_suma_win": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor2_suma_draw": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "number_of_rzut": {
+            "left": 934,
+            "width": 32
+          },
+          "pelne": {
+            "left": 900
+          },
+          "zbierane": {
+            "left": 866
+          },
+          "dziur": {
+            "left": 846,
+            "width": 20
+          },
+          "suma": {
+            "left": 812
+          },
+          "PS": {
+            "left": 781,
+            "width": 30
+          },
+          "PD": {
+            "left": 758,
+            "width": 23
+          }
+        }
+      },
+      {
+        "index_team": 1,
+        "index_player_in_team": 2,
+        "settings": {
+          "top": 78,
+          "width": 34
+        },
+        "cell": {
+          "name": {
+            "left": 1110,
+            "width": 150
+          },
+          "tor1_suma_win": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor2_suma_win": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor2_suma_draw": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "number_of_rzut": {
+            "left": 934,
+            "width": 32
+          },
+          "pelne": {
+            "left": 900
+          },
+          "zbierane": {
+            "left": 866
+          },
+          "dziur": {
+            "left": 846,
+            "width": 20
+          },
+          "suma": {
+            "left": 812
+          },
+          "PS": {
+            "left": 781,
+            "width": 30
+          },
+          "PD": {
+            "left": 758,
+            "width": 23
+          }
+        }
+      },
+      {
+        "index_team": 1,
+        "index_player_in_team": 3,
+        "settings": {
+          "top": 93,
+          "width": 34
+        },
+        "cell": {
+          "name": {
+            "left": 1110,
+            "width": 150
+          },
+          "tor1_suma_win": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor2_suma_win": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor2_suma_draw": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "number_of_rzut": {
+            "left": 934,
+            "width": 32
+          },
+          "pelne": {
+            "left": 900
+          },
+          "zbierane": {
+            "left": 866
+          },
+          "dziur": {
+            "left": 846,
+            "width": 20
+          },
+          "suma": {
+            "left": 812
+          },
+          "PS": {
+            "left": 781,
+            "width": 30
+          },
+          "PD": {
+            "left": 758,
+            "width": 23
+          }
+        }
+      },
+      {
+        "index_team": 1,
+        "index_player_in_team": 4,
+        "settings": {
+          "top": 108,
+          "width": 34
+        },
+        "cell": {
+          "name": {
+            "left": 1110,
+            "width": 150
+          },
+          "tor1_suma_win": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor2_suma_win": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor2_suma_draw": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "number_of_rzut": {
+            "left": 934,
+            "width": 32
+          },
+          "pelne": {
+            "left": 900
+          },
+          "zbierane": {
+            "left": 866
+          },
+          "dziur": {
+            "left": 846,
+            "width": 20
+          },
+          "suma": {
+            "left": 812
+          },
+          "PS": {
+            "left": 781,
+            "width": 30
+          },
+          "PD": {
+            "left": 758,
+            "width": 23
+          }
+        }
+      },
+      {
+        "index_team": 1,
+        "index_player_in_team": 5,
+        "settings": {
+          "top": 123,
+          "width": 34
+        },
+        "cell": {
+          "name": {
+            "left": 1110,
+            "width": 150
+          },
+          "tor1_suma_win": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor1_suma_draw": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor1_suma_lose": {
+            "left": 1074,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor2_suma_win": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor2_suma_draw": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor2_suma_lose": {
+            "left": 1038,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor3_suma_win": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor3_suma_draw": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor3_suma_lose": {
+            "left": 1002,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "tor4_suma_win": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 0]
+          },
+          "tor4_suma_draw": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 150, 150]
+          },
+          "tor4_suma_lose": {
+            "left": 966,
+            "width": 36,
+            "font_color": [0, 0, 150]
+          },
+          "number_of_rzut": {
+            "left": 934,
+            "width": 32
+          },
+          "pelne": {
+            "left": 900
+          },
+          "zbierane": {
+            "left": 866
+          },
+          "dziur": {
+            "left": 846,
+            "width": 20
+          },
+          "suma": {
+            "left": 812
+          },
+          "PS": {
+            "left": 781,
+            "width": 30
+          },
+          "PD": {
+            "left": 758,
+            "width": 23
+          }
+        }
       }
     ]
   },
   "teams": {
-    "settings": {},
+    "settings": {
+      "top": 138,
+      "height":15
+    },
     "teams": [
       {
         "index_team": 0,
@@ -652,18 +1369,52 @@
             "height": 25,
             "max_font_size": 25
           },
-          "name": {},
-          "number_of_rzut": {},
-          "pelne": {},
-          "zbierane": {},
-          "dziur": {},
-          "suma": {},
-          "PS": {}
+          "name": {
+            "height": 22,
+            "top": 11,
+            "left": 20,
+            "width": 502,
+            "font_color": [150, 0, 0]
+          },
+          "number_of_rzut": {
+            "left": 315,
+            "width": 31
+          },
+          "pelne": {
+            "left": 346,
+            "width": 34
+          },
+          "zbierane": {
+            "left": 380,
+            "width": 34
+          },
+          "dziur": {
+            "left": 414,
+            "width": 20
+          },
+          "suma": {
+            "left": 434,
+            "width": 34
+          },
+          "PS": {
+            "left": 468,
+            "width": 31
+          },
+          "sum_difference_negative": {
+            "height": 21,
+            "top": 112,
+            "left": 542,
+            "width": 67,
+            "font_color": [0, 0, 150]
+          }
         }
       },
       {
         "index_team": 1,
-        "settings": {},
+        "settings": {
+          "top": 138,
+          "height":15
+        },
         "cell": {
           "PD": {
             "left": 643,
@@ -672,13 +1423,44 @@
             "height": 25,
             "max_font_size": 25
           },
-          "name": {},
-          "number_of_rzut": {},
-          "pelne": {},
-          "zbierane": {},
-          "dziur": {},
-          "suma": {},
-          "PS": {}
+          "name": {
+            "height": 22,
+            "top": 11,
+            "left": 758,
+            "width": 502,
+            "font_color": [150, 0, 0]
+          },
+          "number_of_rzut": {
+            "left": 934,
+            "width": 31
+          },
+          "pelne": {
+            "left": 900,
+            "width": 34
+          },
+          "zbierane": {
+            "left": 866,
+            "width": 34
+          },
+          "dziur": {
+            "left": 846,
+            "width": 20
+          },
+          "suma": {
+            "left": 812,
+            "width": 34
+          },
+          "PS": {
+            "left": 781,
+            "width": 31
+          },
+          "sum_difference_negative": {
+            "height": 21,
+            "top": 112,
+            "left": 671,
+            "width": 67,
+            "font_color": [0, 0, 150]
+          }
         }
       }
     ]

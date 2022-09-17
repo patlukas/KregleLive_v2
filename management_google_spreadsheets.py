@@ -227,6 +227,8 @@ class ManagementGoogleSpreadsheets:
                     result = self.__obj_to_storage_results.get_data_from_player(index_team, index_player, name_result)
                 if result != saved_player_data.get(name_result, ""):
                     saved_player_data[name_result] = result
+                    if result.isdigit():
+                        result = int(result)
                     list_to_update.append({"range": coords, "values": [[result]]})
             saved_players_data[i] = saved_player_data
         self.__saved_players_data_in_worksheet["players"] = saved_players_data

@@ -75,7 +75,8 @@ class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
             player_id = f"{index_team}|{index_player}"
             if player_id in self.__saved_data["players"].keys():
                 saved_data = self.__saved_data["players"][player_id]
-
+            empty_text_to_draw = []
+            text_to_draw = []
             for name_result, settings in player_details["cell"].items():
                 result = self.__obj_with_results.get_data_from_player(index_team, index_player, name_result)
                 if name_result in saved_data.keys() and result == saved_data[name_result]:
@@ -83,7 +84,12 @@ class _CreatingMainTableDrawResults(methods_to_draw_on_image.MethodsToDrawOnImag
                 else:
                     saved_data[name_result] = result
                 settings = self.__get_settings(player_settings, settings)
-                self.__draw_text(result, settings)
+                if result == "":
+                    empty_text_to_draw.append(["", settings])
+                else:
+                    text_to_draw.append([result, settings])
+            for txt, settings in empty_text_to_draw + text_to_draw:
+                self.__draw_text(txt, settings)
             self.__saved_data["players"][player_id] = saved_data
 
     def __draw_team_results(self) -> None:
