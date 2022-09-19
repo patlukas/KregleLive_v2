@@ -139,15 +139,15 @@
         "left": 2,
         "width": 120
       },
-      "pelne": {
+      "torX_pelne": {
         "left": 64,
         "width": 22,
         "top": 30
       },
-      "zbierane": {
+      "torX_zbierane": {
         "top": 62
       },
-      "suma": {
+      "torX_suma": {
         "left": 88,
         "width": 34
       }

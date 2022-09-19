@@ -465,7 +465,12 @@ class _StorageOfPlayerResults:
         :param tor_number: numer toru na którym gra zawodnik (w Gostyniu 1-6), lub "" gdy nie gra obecnie
         :param number_of_rzut_in_tor: numer rzutu na torze
         :param result_player: wynik w całej grze
-        :return: 0 - nie było zmian, 1 - były zmiany, -1 - gracz już skończył grę, -2 - któraś wartość była błędna
+        :return:
+                0 - nie było zmian,
+                1 - zmienił się wynik
+                2 - wzrosła liczba rzutów ale wynik się nie zmienił (rzut wadliwy)
+                -1 - gracz już skończył grę,
+                -2 - któraś wartość była błędna
         """
         if self.__game_is_end:
             return -1
@@ -511,7 +516,10 @@ class _StorageOfPlayerResults:
 
             self.result_tory[self.number_of_tor].update_data(number_of_rzut_in_tor, result_in_last_rzut)
             self.result_main.update_data(number_of_rzut_in_tor + self.number_of_tor*30, result_in_last_rzut)
-        return 1
+        if result_in_last_rzut:
+            return 1
+        else:
+            return 2
 
     def update_league_points(self, pd: int, sum_ps: int, list_ps: list[int]) -> None:
         """
