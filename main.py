@@ -56,9 +56,27 @@ import cv2
 
 
 class StartProgram:
-    """."""
+    """
+    Klasa odpowiedzialna za zarządzanie programem.
+
+    """
     def __init__(self):
-        """."""
+        """
+        Klasa tworzy potrzebne obiekty do działania programu i uruchamia GUI.
+
+        __obj_to_reading_number_from_cell - obiekt do odczytu wyniku z komórki
+        __obj_to_reading_data_from_image - obiekt do odczytu danyych z obrazu
+        __obj_to_webcam_management - obiekt da zarządzania kamerą (wybór zmiany, pobranie obrazu)
+        __obj_to_get_licenses - obiekt do pobierania danych o licencji
+        __obj_to_storages_results - obiekt do przechowywania wyników
+        __obj_to_game_type_management - obiekt do zarządzania wyboru rodzaju gry (6 - osobowa, 4 - osobowa liga)
+        __obj_to_management_google_spreadsheets - obiekt do zarządzania uruchomieiem i edycją arkusza google
+        __obj_to_looking_for_player_tables - obeikt do szukania tabel z wynikami graczy
+        __obj_to_create_summary_tables - obiekt do tworzenia tabel z podsumowaniem
+        __obj_to_save_data_to_csv_file - obiekt do teorzenia pliku CSV z podsumowaniem
+        __list_until_when_the_interruption_in_reading_the_player_score - lista z czasami kiedy mają być sprawdzane
+                                                                         rezultaty graczy
+        """
         self.__obj_to_reading_number_from_cell = reading_numbers_from_cell.ReadingNumbersFromCell(
             "templates", "unrecognized_sign", "unrecognized_cell", 0.95, 0.9, 0.75
         )
@@ -66,7 +84,8 @@ class StartProgram:
             self.__obj_to_reading_number_from_cell, 0, 3, 12
         )
         self.__obj_to_webcam_management: WebcamManagement = WebcamManagement()
-        self.__obj_to_get_licenses: GetLicenses = GetLicenses("settings/main_licenses_settings.json", "spreadsheets/config.json")
+        self.__obj_to_get_licenses: GetLicenses = GetLicenses("settings/main_licenses_settings.json",
+                                                              "spreadsheets/config.json")
         self.__obj_to_storages_results: StorageOfAllPlayersScore = StorageOfAllPlayersScore(
             number_of_team=2,
             number_of_player_in_team=6
@@ -152,8 +171,8 @@ class StartProgram:
                 if not self.__is_it_time_to_check_the_player_results(affiliation_player, i):
                     continue
                 how_check += 1  # del
-                result_update, tor_nr = self.__read_and_save_player_results(frame, affiliation_player, i)
-                if not self.__set_time_when_will_be_next_check_player_results(i, result_update, tor_nr):
+                update_res, tor_nr, nr_throw_in_tor = self.__read_and_save_player_results(frame, affiliation_player, i)
+                if not self.__set_time_when_will_be_next_check_player_results(i, update_res, tor_nr, nr_throw_in_tor):
                     how_many_players_not_finished_game -= 1
             self.__obj_to_storages_results.calculate_league_points()
             self.__visualization_results_in_tables_and_in_sheet(obj_to_create_main_table, obj_to_create_lane_table)
@@ -225,7 +244,7 @@ class StartProgram:
         return True
 
     def __read_and_save_player_results(self, frame: np.ndarray, affiliation_player: list[int, int], index_player: int
-                                       ) -> [int, None | str]:
+                                       ) -> [int, None | str, None | str]:
         """
         Metoda odczytuje wyniki gracza i zapisuje je w programie.
 
@@ -236,16 +255,17 @@ class StartProgram:
                     -1 jak gracz skończył, -2 jak nie udało się odczytać
                 2. wartośćpusty str jak gracz nie gra aktualnie, str z liczbą określającą na którym torze gra,
                     None jak nie udało się odczytać
+                3. wartość str jak udało się odczytać który jest rzut na torze, None jak nie udało się odczytać
         """
         nr_team, nr_player = affiliation_player
         tor_nr, nr_of_throw_tor, player_result = self.__obj_to_reading_data_from_image.read_data_from_row(frame,
                                                                                                           index_player)
         player = self.__obj_to_storages_results.teams[nr_team].players_results[nr_player]
         result_update = player.update_data(tor_nr, nr_of_throw_tor, player_result)
-        return [result_update, tor_nr]
+        return [result_update, tor_nr, nr_of_throw_tor]
 
     def __set_time_when_will_be_next_check_player_results(self, index_player: int, update_result: int,
-                                                          tor_nr: None | str) -> True:
+                                                          tor_nr: None | str, nr_of_throw_in_tor: None | str) -> True:
         """
         Metoda ustawie kiedy ma być następne sprawdzenie wyników gracza.
 
@@ -253,20 +273,23 @@ class StartProgram:
         :param update_result: jaki rezultat został zwrócony po edycji wyników gracza: 0-bez zmian, 1- zmiana wyniku,
                                 2 - rzut wadliwy, -1 gracz skończył, -2 błąd w odczycie wyników
         :param tor_nr: numer toru na którym gra gracz, "" jak nie gra, None jeżeli nie udało się odczytać
+        :param nr_of_throw_in_tor: numer rzutu na torze, jak nie udało się odczytać to None
         :return: True jeżeli gracz jeszcze gra, False, jeżeli gracz skńczył grę
         """
         if update_result == -1:
-            self.__list_until_when_the_interruption_in_reading_the_player_score[index_player] = -3
+            self.__list_until_when_the_interruption_in_reading_the_player_score[index_player] = -4
             return False
         if tor_nr == "":
-            self.__list_until_when_the_interruption_in_reading_the_player_score[index_player] = -2
+            self.__list_until_when_the_interruption_in_reading_the_player_score[index_player] = -3
             return True
         waiting_time = 0
-        if update_result == 1:
+        if nr_of_throw_in_tor == "30":
+            waiting_time = 0
+        elif update_result == 1:
             waiting_time = 17
         elif update_result == 2:
             waiting_time = 8
-
+        waiting_time /= 2
         self.__list_until_when_the_interruption_in_reading_the_player_score[index_player] = time.time() + waiting_time
         return True
 
@@ -286,7 +309,7 @@ class StartProgram:
         """
         Metoda oblicza na ile czasu ma być program uśpiony.
 
-        Jeżeli wszyscy gracze którzy grali już skończyli grę to czas oczekiwania graczy, którzy mieli -2 zmianiany jest
+        Jeżeli wszyscy gracze którzy grali już skończyli grę to czas oczekiwania graczy, którzy mieli -3 zmianiany jest
         na aktualny czas + 75s
 
         :return: <float> na ile sekund ma być uśpiony program
@@ -299,11 +322,10 @@ class StartProgram:
                 when_next_reading_results = time_next_reading_player_result
 
         if when_next_reading_results == -1:
-            time_plus_75 = time.time() + 75
-            when_next_reading_results = time_plus_75
+            when_next_reading_results = time.time() + 75
             for i in range(len(self.__list_until_when_the_interruption_in_reading_the_player_score)):
-                if self.__list_until_when_the_interruption_in_reading_the_player_score[i] == -2:
-                    self.__list_until_when_the_interruption_in_reading_the_player_score[i] = time_plus_75
+                if self.__list_until_when_the_interruption_in_reading_the_player_score[i] == -3:
+                    self.__list_until_when_the_interruption_in_reading_the_player_score[i] = when_next_reading_results
 
         time_sleep = when_next_reading_results - time.time()
         if time_sleep < 1:
