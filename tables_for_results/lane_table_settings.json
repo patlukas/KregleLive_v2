@@ -1,32 +1,32 @@
 {
   "path_to_table": "tables_for_results/img_tables/one_lane_table.png",
   "background_color": [255, 0, 255],
-  "width": 780,
-  "height": 85,
+  "width": 807,
+  "height": 87,
   "table_coords": {
     "1": {
-      "top": 0,
-      "left": 0
+      "top": 2,
+      "left": 2
     },
     "2": {
-      "top": 0,
-      "left": 130
+      "top": 2,
+      "left": 135
     },
     "3": {
-      "top": 0,
-      "left": 260
+      "top": 2,
+      "left": 273
     },
     "4": {
-      "top": 0,
-      "left": 390
+      "top": 2,
+      "left": 406
     },
     "5": {
-      "top": 0,
-      "left": 520
+      "top": 2,
+      "left": 544
     },
     "6": {
-      "top": 0,
-      "left": 650
+      "top": 2,
+      "left": 677
     }
   },
   "cell_in_table": {

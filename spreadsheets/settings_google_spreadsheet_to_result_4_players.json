@@ -1,0 +1,239 @@
+{
+  "players": [
+    {
+      "index_team": 0,
+      "index_player": 0,
+      "cells": {
+        "name_player1": "A4",
+        "change1": "A5",
+        "name_player2": "A6",
+        "change2": "A7",
+        "name_player3": "A8",
+        "tor1_number_of_rzut": "B5",
+        "tor1_pelne": "C5",
+        "tor1_zbierane": "D5",
+        "tor1_dziur": "E5",
+        "tor2_number_of_rzut": "B6",
+        "tor2_pelne": "C6",
+        "tor2_zbierane": "D6",
+        "tor2_dziur": "E6",
+        "tor3_number_of_rzut": "B7",
+        "tor3_pelne": "C7",
+        "tor3_zbierane": "D7",
+        "tor3_dziur": "E7",
+        "tor4_number_of_rzut": "B8",
+        "tor4_pelne": "C8",
+        "tor4_zbierane": "D8",
+        "tor4_dziur": "E8"
+      }
+    },
+    {
+      "index_team": 0,
+      "index_player": 1,
+      "cells": {
+        "name_player1": "A11",
+        "change1": "A12",
+        "name_player2": "A13",
+        "change2": "A14",
+        "name_player3": "A15",
+        "tor1_number_of_rzut": "B12",
+        "tor1_pelne": "C12",
+        "tor1_zbierane": "D12",
+        "tor1_dziur": "E12",
+        "tor2_number_of_rzut": "B13",
+        "tor2_pelne": "C13",
+        "tor2_zbierane": "D13",
+        "tor2_dziur": "E13",
+        "tor3_number_of_rzut": "B14",
+        "tor3_pelne": "C14",
+        "tor3_zbierane": "D14",
+        "tor3_dziur": "E14",
+        "tor4_number_of_rzut": "B15",
+        "tor4_pelne": "C15",
+        "tor4_zbierane": "D15",
+        "tor4_dziur": "E15"
+      }
+    },
+    {
+      "index_team": 0,
+      "index_player": 2,
+      "cells": {
+        "name_player1": "A18",
+        "change1": "A19",
+        "name_player2": "A20",
+        "change2": "A21",
+        "name_player3": "A22",
+        "tor1_number_of_rzut": "B19",
+        "tor1_pelne": "C19",
+        "tor1_zbierane": "D19",
+        "tor1_dziur": "E19",
+        "tor2_number_of_rzut": "B20",
+        "tor2_pelne": "C20",
+        "tor2_zbierane": "D20",
+        "tor2_dziur": "E20",
+        "tor3_number_of_rzut": "B21",
+        "tor3_pelne": "C21",
+        "tor3_zbierane": "D21",
+        "tor3_dziur": "E21",
+        "tor4_number_of_rzut": "B22",
+        "tor4_pelne": "C22",
+        "tor4_zbierane": "D22",
+        "tor4_dziur": "E22"
+      }
+    },
+    {
+      "index_team": 0,
+      "index_player": 3,
+      "cells": {
+        "name_player1": "A25",
+        "change1": "A26",
+        "name_player2": "A27",
+        "change2": "A28",
+        "name_player3": "A29",
+        "tor1_number_of_rzut": "B26",
+        "tor1_pelne": "C26",
+        "tor1_zbierane": "D26",
+        "tor1_dziur": "E26",
+        "tor2_number_of_rzut": "B27",
+        "tor2_pelne": "C27",
+        "tor2_zbierane": "D27",
+        "tor2_dziur": "E27",
+        "tor3_number_of_rzut": "B28",
+        "tor3_pelne": "C28",
+        "tor3_zbierane": "D28",
+        "tor3_dziur": "E28",
+        "tor4_number_of_rzut": "B29",
+        "tor4_pelne": "C29",
+        "tor4_zbierane": "D29",
+        "tor4_dziur": "E29"
+      }
+    },
+
+    {
+      "index_team": 1,
+      "index_player": 0,
+      "cells": {
+        "name_player1": "L4",
+        "change1": "L5",
+        "name_player2": "L6",
+        "change2": "L7",
+        "name_player3": "L8",
+        "tor1_number_of_rzut": "M5",
+        "tor1_pelne": "N5",
+        "tor1_zbierane": "O5",
+        "tor1_dziur": "P5",
+        "tor2_number_of_rzut": "M6",
+        "tor2_pelne": "N6",
+        "tor2_zbierane": "O6",
+        "tor2_dziur": "P6",
+        "tor3_number_of_rzut": "M7",
+        "tor3_pelne": "N7",
+        "tor3_zbierane": "O7",
+        "tor3_dziur": "P7",
+        "tor4_number_of_rzut": "M8",
+        "tor4_pelne": "N8",
+        "tor4_zbierane": "O8",
+        "tor4_dziur": "P8"
+      }
+    },
+    {
+      "index_team": 1,
+      "index_player": 1,
+      "cells": {
+        "name_player1": "L11",
+        "change1": "L12",
+        "name_player2": "L13",
+        "change2": "L14",
+        "name_player3": "L15",
+        "tor1_number_of_rzut": "M12",
+        "tor1_pelne": "N12",
+        "tor1_zbierane": "O12",
+        "tor1_dziur": "P12",
+        "tor2_number_of_rzut": "M13",
+        "tor2_pelne": "N13",
+        "tor2_zbierane": "O13",
+        "tor2_dziur": "P13",
+        "tor3_number_of_rzut": "M14",
+        "tor3_pelne": "N14",
+        "tor3_zbierane": "O14",
+        "tor3_dziur": "P14",
+        "tor4_number_of_rzut": "M15",
+        "tor4_pelne": "N15",
+        "tor4_zbierane": "O15",
+        "tor4_dziur": "P15"
+      }
+    },
+    {
+      "index_team": 1,
+      "index_player": 2,
+      "cells": {
+        "name_player1": "L18",
+        "change1": "L19",
+        "name_player2": "L20",
+        "change2": "L21",
+        "name_player3": "L22",
+        "tor1_number_of_rzut": "M19",
+        "tor1_pelne": "N19",
+        "tor1_zbierane": "O19",
+        "tor1_dziur": "P19",
+        "tor2_number_of_rzut": "M20",
+        "tor2_pelne": "N20",
+        "tor2_zbierane": "O20",
+        "tor2_dziur": "P20",
+        "tor3_number_of_rzut": "M21",
+        "tor3_pelne": "N21",
+        "tor3_zbierane": "O21",
+        "tor3_dziur": "P21",
+        "tor4_number_of_rzut": "M22",
+        "tor4_pelne": "N22",
+        "tor4_zbierane": "O22",
+        "tor4_dziur": "P22"
+      }
+    },
+    {
+      "index_team": 1,
+      "index_player": 3,
+      "cells": {
+        "name_player1": "L25",
+        "change1": "L26",
+        "name_player2": "L27",
+        "change2": "L28",
+        "name_player3": "L29",
+        "tor1_number_of_rzut": "M26",
+        "tor1_pelne": "N26",
+        "tor1_zbierane": "O26",
+        "tor1_dziur": "P26",
+        "tor2_number_of_rzut": "M27",
+        "tor2_pelne": "N27",
+        "tor2_zbierane": "O27",
+        "tor2_dziur": "P27",
+        "tor3_number_of_rzut": "M28",
+        "tor3_pelne": "N28",
+        "tor3_zbierane": "O28",
+        "tor3_dziur": "P28",
+        "tor4_number_of_rzut": "M29",
+        "tor4_pelne": "N29",
+        "tor4_zbierane": "O29",
+        "tor4_dziur": "P29"
+      }
+    }
+  ],
+  "teams": [
+    {
+      "index_team": 0,
+      "cells": {
+        "name": "A3"
+      }
+    },
+    {
+      "index_team": 1,
+      "cells": {
+        "name": "L3"
+      }
+    }
+  ],
+  "other": {
+    "time": "C1"
+  },
+  "number_of_columns_to_move_right": 9
+}

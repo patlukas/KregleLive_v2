@@ -77,6 +77,7 @@ class StartProgram:
         __list_until_when_the_interruption_in_reading_the_player_score - lista z czasami kiedy mają być sprawdzane
                                                                          rezultaty graczy
         """
+        Informing().clear_log_file()
         self.__obj_to_reading_number_from_cell = reading_numbers_from_cell.ReadingNumbersFromCell(
             "templates", "unrecognized_sign", "unrecognized_cell", 0.95, 0.9, 0.75
         )
@@ -108,7 +109,6 @@ class StartProgram:
         )
         self.__obj_to_save_data_to_csv_file = results_to_csv_file.ResultsToCsvFile(self.__obj_to_storages_results)
         self.__list_until_when_the_interruption_in_reading_the_player_score: list[float] = []
-        Informing().clear_log_file()
         self.__run = False
         gui.start_gui(
             self.__obj_to_game_type_management,

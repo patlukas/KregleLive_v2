@@ -72,7 +72,7 @@ class ManagementGoogleSpreadsheets:
             file = open(path_settings_worksheet, encoding='utf8')
             return json.load(file)
         except FileNotFoundError:
-            Informing.error(f"Nie można odczytać ustawień arkusza z pliku {path_settings_worksheet}")
+            Informing().error(f"Nie można odczytać ustawień arkusza z pliku {path_settings_worksheet}")
             return None
 
     def connecting_to_spreadsheet_by_link(self, link_to_spreadsheets: str) -> int:

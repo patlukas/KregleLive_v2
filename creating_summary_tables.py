@@ -4,6 +4,7 @@ import json
 import cv2
 import numpy as np
 from PIL import Image
+import os
 
 from storages_of_players_results import StorageOfAllPlayersScore, _StorageOfPlayerResults
 from methods_to_draw_on_image import MethodsToDrawOnImage
@@ -34,15 +35,19 @@ class CreatingSummaryTables(MethodsToDrawOnImage):
     def create_images_with_summary_results(self) -> None:
         """Metoda jest odpowiedzialna za stworzenie wszystkich plansz ze ststystykami."""
         self.__calculate_statistic()
+        date = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        path_to_historical_statistics = f'{self.__summary_tables_settings["path_to_save_historical_statistics"]}{date}'
+        if not os.path.exists(path_to_historical_statistics):
+            os.mkdir(path_to_historical_statistics)
+        path_to_historical_statistics += "/ "
         CreateSummaryTablesComparisonTeamsAndTheBestPlayers(self.__statistic_players,
                                                             self.__summary_tables_settings[
                                                                 "path_to_save_current_statistics"],
-                                                            self.__summary_tables_settings[
-                                                                "path_to_save_historical_statistics"],
+                                                            path_to_historical_statistics,
                                                             self.__summary_tables_settings["path_to_font"])
         CreateSummaryTablesDistributionResult(self.__statistic_players,
                                               self.__summary_tables_settings["path_to_save_current_statistics"],
-                                              self.__summary_tables_settings["path_to_save_historical_statistics"],
+                                              path_to_historical_statistics,
                                               self.__summary_tables_settings["path_to_font"])
 
     def __calculate_statistic(self) -> None:
@@ -308,9 +313,8 @@ class CreateSummaryTablesComparisonTeamsAndTheBestPlayers(MethodsToDrawOnImage):
         img = Image.fromarray(img, "RGB")
         img.paste(img_team_comparison, (0, 0))
         img.paste(img_high_score_board, (580, 0))
-        date = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         img.save(self.__path_to_save_current_stat + "Stat_0.png", "PNG")
-        img.save(self.__path_to_save_historical_statistics + date + "_Stat_0.png", "PNG")
+        img.save(f"{self.__path_to_save_historical_statistics}Stat_0.png", "PNG")
         img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         cv2.imshow("Statystyka: Porownanie druzyn i najlepsi zawodnicy", img)
         cv2.waitKey(1)
@@ -445,6 +449,8 @@ class CreateSummaryTablesComparisonTeamsAndTheBestPlayers(MethodsToDrawOnImage):
                             players_name = self.__get_short_player_name(players_name)
                         players_name += ", " + self.__get_short_player_name(player_stat["name"])
                         number_of_player += 1
+            if best_result == 0:
+                players_name = "-----"
             bar_chart = self.draw_right_text_by_coord(bar_chart, desc_stat + f" ({best_result}): ", 14, font_path,
                                                       (255, 255, 0), (10, 360, 3 + nr_stat * 18 + nr_section * 10 + 30,
                                                                       22 + nr_stat * 18 + nr_section * 10 + 30))
@@ -661,9 +667,8 @@ class CreateSummaryTablesDistributionResult(MethodsToDrawOnImage):
                                                                 font_color, position)
 
                 img.paste(img_player, (nr_player * one_player_width, nr_row * 250 + 50))
-        date = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         img.save(self.__path_to_save_current_stat + name_save, "PNG")
-        img.save(self.__path_to_save_historical_statistics + date + "_" + name_save, "PNG")
+        img.save(self.__path_to_save_historical_statistics + name_save, "PNG")
         img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         cv2.imshow(name_window, img)
         cv2.waitKey(1)

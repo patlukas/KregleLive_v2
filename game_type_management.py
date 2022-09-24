@@ -53,7 +53,7 @@ class GameTypeManagement:
             if len(self.list_name_of_game_types):
                 self.choose_game_type(self.list_name_of_game_types[0])
         except FileNotFoundError:
-            Informing.error(f"Nie można odczytać typów gier z pliku {path_to_json}")
+            Informing().error(f"Nie można odczytać typów gier z pliku {path_to_json}")
 
     def choose_game_type(self, name_type: str) -> None:
         """

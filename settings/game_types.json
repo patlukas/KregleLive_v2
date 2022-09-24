@@ -9,7 +9,7 @@
     "name_of_game": "superliga mężczyzn",
     "tables_for_results": "tables_for_results/six_player_league.json",
     "tables_for_lane_results": "tables_for_results/lane_table_settings.json",
-    "google_spreadsheets": "spreadsheets/settings_google_spreadsheet_to_result.json"
+    "google_spreadsheets": "spreadsheets/settings_google_spreadsheet_to_result_6_players.json"
   },
   "Liga 4-osobowa": {
     "type": "league",
@@ -17,10 +17,10 @@
     "number_of_player_in_team": 4,
     "number_of_changes": 1,
     "affiliation_of_players_to_teams": [0, 0, -1, 0, 0, -1, 1, 1, -1, 1, 1, -1],
-    "list_category": ["Junior", "Junior Młodszy"],
-    "name_of_game": "superliga mężczyzn",
-    "tables_for_results": "tables_for_results/six_player_league.json",
+    "list_category": ["Junior", "Junior Młodszy", "Juniorka", "Juniorka Młodsza"],
+    "name_of_game": "centralna liga juniorow",
+    "tables_for_results": "tables_for_results/four_player_league.json",
     "tables_for_lane_results": "tables_for_results/lane_table_settings.json",
-    "google_spreadsheets": "spreadsheets/settings_google_spreadsheet_to_result.json"
+    "google_spreadsheets": "spreadsheets/settings_google_spreadsheet_to_result_4_players.json"
   }
 }

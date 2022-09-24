@@ -1,9 +1,10 @@
+"""."""
 import sys
+
+import numpy as np
 from PyQt5.QtWidgets import (
     QApplication,
-    QMainWindow,
     QGroupBox,
-    QVBoxLayout,
     QComboBox,
     QGridLayout,
     QWidget,
@@ -16,15 +17,13 @@ from PyQt5.QtWidgets import (
     QTableWidgetItem,
     QHeaderView,
     QAbstractItemView,
-    QCheckBox,
     QHBoxLayout,
     QListWidget,
     QMenu
 )
 from PyQt5.QtGui import QPixmap, QImage
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtGui import QCursor
-from PyQt5.QtCore import Qt, QTimer, QSize, QEvent
+from PyQt5 import QtGui
+from PyQt5.QtCore import Qt, QTimer, QEvent
 
 import cv2
 import qimage2ndarray
@@ -38,45 +37,6 @@ from results_to_csv_file import ResultsToCsvFile
 from get_licenses import GetLicenses
 from search_players_rows import LookingForPlayerTables
 from informing import Informing
-
-# app = QApplication(sys.argv)
-# window = QWidget()
-# window.setWindowTitle("Aplikacja")
-# window.setFixedWidth(1000)
-# window.move(500, 200)
-# window.setStyleSheet("background: #161219;")
-#
-# grid = QGridLayout()
-#
-#
-# def frame1():
-#     #display logo
-#     image = QPixmap("settings/splashscreen.png")
-#     logo = QLabel()
-#     logo.setPixmap(image)
-#     logo.setAlignment(QtCore.Qt.AlignCenter)
-#     logo.setStyleSheet("margin-top: 50px;")
-#
-#     button = QPushButton("PLAY")
-#     button.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
-#     button.setStyleSheet(
-#         "*{border: 4px solid '#BC006C';"+
-#         "border-radius: 45px;"+
-#         "font-size: 35px;"+
-#         "padding: 25px 0;"+
-#         "margin: 100px 200px;}"+
-#         "*:hover{background: '#BC006C';}"
-#     )
-#
-#
-#     grid.addWidget(logo, 0, 0)
-#     grid.addWidget(button, 1, 0)
-#
-# frame1()
-# window.setLayout(grid)
-#
-# window.show()
-# # sys.exit(app.exec())
 
 
 class GUI(QDialog):
@@ -312,15 +272,16 @@ class ShowFrameFromCamera(QGroupBox):
             frame = self.__obj_to_looking_for_player_tables.drawing_cells_in_image(frame)
         elif self.__type_frame == 2:
             frame = self.__obj_to_looking_for_player_tables.drawing_all_cells_in_image(frame)
-        q_image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_BGR888)
-        pixmap = QPixmap(q_image)
-        pixmap = pixmap.scaled(601, 350, Qt.KeepAspectRatio)
-        self.__label_frame_camera.setPixmap(pixmap)
+        if type(frame) == np.ndarray:
+            q_image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_BGR888)
+            pixmap = QPixmap(q_image)
+            pixmap = pixmap.scaled(601, 350, Qt.KeepAspectRatio)
+            self.__label_frame_camera.setPixmap(pixmap)
 
     def __set_interval(self):
         self.timer = QTimer()
         self.timer.timeout.connect(lambda: self.__show_frame())
-        self.timer.start(100)
+        self.timer.start(1000)
 
 
 class ConnectToSpreadsheet(QGroupBox):
