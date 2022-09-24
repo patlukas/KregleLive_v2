@@ -1,4 +1,5 @@
 """Moduł służy do przechowywania danych, wyników graczy i drużyn"""
+import copy
 import math
 
 import numpy as np
@@ -434,8 +435,10 @@ class _StorageOfPlayerResults:
         """
         lists_zbierane = []
         for tor in self.result_tory:
-            lists_zbierane.append(tor.list_zbierane)
+            copy_tor_zbierane = copy.deepcopy(tor.list_zbierane)
+            lists_zbierane.append(copy_tor_zbierane)
         for nr_throw, unrecognized_result in self.list_red_cards:
+            print(nr_throw, unrecognized_result)
             nr_tor = math.floor((nr_throw-1) / 30)
             nr_throw_in_tor = (nr_throw-1) % 30
             nr_throw_in_tor -= 15
