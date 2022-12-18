@@ -1,6 +1,7 @@
 """Moduł odpowiedzialny za zarządzanie błędami i informajami jakie ma dostać użytkownik."""
 
 from datetime import datetime
+import os.path
 
 
 class Informing:
@@ -66,11 +67,14 @@ class Informing:
 
     def clear_log_file(self):
         """Metoda przenosi zawartość głównego log do archiwum log oraz czyści plik z głównymi log."""
-        with open(self.__path_to_arch, "a") as arch_file, open(self.__path, "r") as file:
-            arch_file.write(file.read())
-            file.close()
-            open(self.__path, "w").close()
-            arch_file.close()
+        if os.path.exists(self.__path):
+            with open(self.__path_to_arch, "a") as arch_file, open(self.__path, "r") as file:
+                arch_file.write(file.read())
+                file.close()
+                open(self.__path, "w").close()
+                arch_file.close()
+        else:
+            open(self.__path, "x")
 
     def get_list_message(self) -> list[dict]:
         """

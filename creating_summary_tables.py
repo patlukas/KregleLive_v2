@@ -205,9 +205,9 @@ class CreatingSummaryTables(MethodsToDrawOnImage):
         for tor in player_results.result_tory:
             if tor.suma > player_stat["tor_best_suma"]:
                 player_stat["tor_best_suma"] = tor.suma
-            if tor.suma > player_stat["tor_best_pelne"]:
+            if tor.pelne > player_stat["tor_best_pelne"]:
                 player_stat["tor_best_pelne"] = tor.pelne
-            if tor.suma > player_stat["tor_best_zbierane"]:
+            if tor.zbierane > player_stat["tor_best_zbierane"]:
                 player_stat["tor_best_zbierane"] = tor.zbierane
         return player_stat
 

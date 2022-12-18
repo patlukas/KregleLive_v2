@@ -19,7 +19,9 @@ from PyQt5.QtWidgets import (
     QAbstractItemView,
     QHBoxLayout,
     QListWidget,
-    QMenu
+    QMenu,
+    QSplashScreen,
+    QProgressBar
 )
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5 import QtGui
@@ -41,6 +43,7 @@ from informing import Informing
 
 class GUI(QDialog):
     """."""
+
     def __init__(self, obj_to_game_type_management: GameTypeManagement, obj_to_webcam_management: WebcamManagement,
                  obj_to_management_google_sheet: ManagementGoogleSpreadsheets,
                  obj_to_storages_results: StorageOfAllPlayersScore, obj_to_get_licenses: GetLicenses,
@@ -97,15 +100,17 @@ class GUI(QDialog):
         column1_layout.addWidget(self.__panel_players, 1, 0, 1, 2)
         column1_layout.addWidget(self.__panel_red_cards, 2, 0, 1, 2)
         column1_layout.addWidget(ConnectToSpreadsheet(self.__obj_to_management_google_spreadsheets), 3, 0, 1, 2)
+        column1_layout.addWidget(AdditionalOptionPanel(self.__obj_to_create_summary_tables, self.__obj_to_save_csv), 4,
+                                 0, 1, 2)
 
         column2 = QWidget()
         column2_layout = QGridLayout()
         column2.setLayout(column2_layout)
 
-        column2_layout.addWidget(ShowFrameFromCamera(self.__obj_to_webcam_management, self.__obj_to_looking_for_player_tables), 0, 0)
+        column2_layout.addWidget(
+            ShowFrameFromCamera(self.__obj_to_webcam_management, self.__obj_to_looking_for_player_tables), 0, 0)
         column2_layout.addWidget(self.__panel_red_cards, 1, 0)
         column2_layout.addWidget(ErrorPanel(self.__obj_with_informing), 2, 0)
-        column2_layout.addWidget(AdditionalOptionPanel(self.__obj_to_create_summary_tables, self.__obj_to_save_csv), 3, 0)
 
         self.__layout.addWidget(column1)
         self.__layout.addWidget(column2)
@@ -117,6 +122,7 @@ class GUI(QDialog):
 
 class GameTypeSelection(QGroupBox):
     """."""
+
     def __init__(self, obj_to_game_type_management: GameTypeManagement,
                  obj_to_looking_for_player_tables: LookingForPlayerTables,
                  on_after_change_game_type,
@@ -203,6 +209,7 @@ class GameTypeSelection(QGroupBox):
 
 class CameraSelection(QGroupBox):
     """."""
+
     def __init__(self, obj_to_webcam_management: WebcamManagement):
         super().__init__("Wybór kamery")
         self.__obj_to_webcam_management: WebcamManagement = obj_to_webcam_management
@@ -231,6 +238,7 @@ class CameraSelection(QGroupBox):
 
 class ShowFrameFromCamera(QGroupBox):
     """."""
+
     def __init__(self, obj_to_webcam_management: WebcamManagement,
                  obj_to_looking_for_player_tables: LookingForPlayerTables):
         super().__init__("Obraz z kamery")
@@ -286,6 +294,7 @@ class ShowFrameFromCamera(QGroupBox):
 
 class ConnectToSpreadsheet(QGroupBox):
     """."""
+
     def __init__(self, obj_to_management_google_spreadsheets: ManagementGoogleSpreadsheets):
         super().__init__("Łączenie z arkuszem kalkulacyjnym Google")
         self.__obj_to_management_google_spreadsheets: ManagementGoogleSpreadsheets = obj_to_management_google_spreadsheets
@@ -404,6 +413,7 @@ class ConnectToSpreadsheet(QGroupBox):
 
 class ErrorPanel(QGroupBox):
     """."""
+
     def __init__(self, obj_with_informing: Informing):
         super().__init__("Błędy")
         self.__obj_with_informing: Informing = obj_with_informing
@@ -466,11 +476,12 @@ class ErrorPanel(QGroupBox):
 
 class PlayersPanel(QGroupBox):
     """."""
+
     def __init__(
-        self,
-        obj_to_game_type_management: GameTypeManagement,
-        obj_to_storage_results: StorageOfAllPlayersScore,
-        obj_to_get_licenses: GetLicenses
+            self,
+            obj_to_game_type_management: GameTypeManagement,
+            obj_to_storage_results: StorageOfAllPlayersScore,
+            obj_to_get_licenses: GetLicenses
     ):
         super().__init__("Ustawianie nazw")
         self.__obj_to_game_type_management: GameTypeManagement = obj_to_game_type_management
@@ -500,6 +511,7 @@ class PlayersPanel(QGroupBox):
 
 class LeaguePlayerPanel(QWidget):
     """."""
+
     def __init__(self, obj_to_game_type_management: GameTypeManagement,
                  obj_to_storage_results: StorageOfAllPlayersScore,
                  obj_to_get_licenses: GetLicenses):
@@ -576,8 +588,8 @@ class LeaguePlayerPanel(QWidget):
             combobox_player = QComboBox()
             combobox_player.setEditable(True)
             list_combobox_player.append(combobox_player)
-            layout.addWidget(QLabel(f"Gracz {i+1}"), 2+i, 0)
-            layout.addWidget(combobox_player, 2+i, 1)
+            layout.addWidget(QLabel(f"Gracz {i + 1}"), 2 + i, 0)
+            layout.addWidget(combobox_player, 2 + i, 1)
 
         dict_widgets["combobox_team"] = combobox_team
         dict_widgets["input_name_team"] = input_name_team
@@ -648,6 +660,7 @@ class LeaguePlayerPanel(QWidget):
 
 class RedCardsResultsPanel(QGroupBox):
     """."""
+
     def __init__(self, obj_to_storage_results: StorageOfAllPlayersScore):
         super().__init__("Czerwone kartki")
         self.setToolTip("Należy dodawać wszystkie czerwone kartki, gdy gracz dostał ją w zbieranych i trafił więcej "
@@ -670,7 +683,7 @@ class RedCardsResultsPanel(QGroupBox):
         list_players = []
         if self.__obj_to_storage_results.number_of_teams == 2:
             for name_team in ["Gospodarz", "Gość"]:
-                for nr_player in range(1, self.__obj_to_storage_results.number_of_players_in_team+1):
+                for nr_player in range(1, self.__obj_to_storage_results.number_of_players_in_team + 1):
                     list_players.append(f"{name_team} | Gracz {nr_player}")
         else:
             for nr_player in range(1, self.__obj_to_storage_results.number_of_players_in_team + 1):
@@ -685,7 +698,7 @@ class RedCardsResultsPanel(QGroupBox):
         nr_throw_with_result_zero = [""]
         for nr_throw, result in enumerate(results):
             if result == 0:
-                nr_throw_with_result_zero.append(str(nr_throw+1))
+                nr_throw_with_result_zero.append(str(nr_throw + 1))
         self.__combobox_throw.clear()
         self.__combobox_throw.addItems(nr_throw_with_result_zero)
 
@@ -774,7 +787,8 @@ class RedCardsResultsPanel(QGroupBox):
             throw = int(item.split(" otrzymał czerwoną kartkę w ")[1].split(" rzucie, gdy zbił ")[0])
             result = int(item.split(" rzucie, gdy zbił ")[1].split(" kręgli")[0])
             nr_team, nr_player = self.__get_nrteam_and_nrplayer_name_player(player)
-            self.__obj_to_storage_results.teams[nr_team].players_results[nr_player].list_red_cards.append((throw, result))
+            self.__obj_to_storage_results.teams[nr_team].players_results[nr_player].list_red_cards.append(
+                (throw, result))
 
     def remove_red_cards(self):
         """."""
@@ -786,6 +800,7 @@ class RedCardsResultsPanel(QGroupBox):
 
 class AdditionalOptionPanel(QGroupBox):
     """."""
+
     def __init__(self, obj_to_create_stat: CreatingSummaryTables, obj_to_save_csv: ResultsToCsvFile):
         super().__init__("Dodatkowe opcje")
         self.__obj_to_create_stat: CreatingSummaryTables = obj_to_create_stat
@@ -806,23 +821,41 @@ class AdditionalOptionPanel(QGroupBox):
         self.__layout.addWidget(self.__save_csv, 0, 1)
 
 
-def start_gui(
-        obj_to_game_type_management: GameTypeManagement,
-        obj_to_webcam_management: WebcamManagement,
-        obj_to_management_google_spreadsheets: ManagementGoogleSpreadsheets,
-        obj_to_storage_results: StorageOfAllPlayersScore,
-        obj_to_get_licenses: GetLicenses,
-        obj_to_looking_for_player_tables,
-        obj_to_create_summary_tables,
-        obj_to_save_csv,
-        on_start_program,
-        on_stop_program
-):
+class ManagementGUI:
     """."""
-    app = QApplication(sys.argv)
-    ex = GUI(obj_to_game_type_management, obj_to_webcam_management, obj_to_management_google_spreadsheets,
-             obj_to_storage_results, obj_to_get_licenses, obj_to_looking_for_player_tables,
-             obj_to_create_summary_tables, obj_to_save_csv,
-             on_start_program, on_stop_program)
-    ex.show()
-    sys.exit(app.exec_())
+
+    def __init__(self):
+        """."""
+        self.__app = QApplication(sys.argv)
+        self.__splash_screen = None
+
+    def show_splash_screen(self):
+        """."""
+        splash_pix = QPixmap('image/splashscreen.png')
+
+        self.__splash_screen = QSplashScreen(splash_pix, Qt.WindowStaysOnTopHint)
+        self.__splash_screen.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
+        self.__splash_screen.setEnabled(False)
+
+        self.__splash_screen.show()
+        self.__splash_screen.showMessage("", Qt.AlignTop | Qt.AlignCenter, Qt.black)
+
+    def start_gui(self, obj_to_game_type_management: GameTypeManagement,
+                  obj_to_webcam_management: WebcamManagement,
+                  obj_to_management_google_spreadsheets: ManagementGoogleSpreadsheets,
+                  obj_to_storage_results: StorageOfAllPlayersScore,
+                  obj_to_get_licenses: GetLicenses,
+                  obj_to_looking_for_player_tables,
+                  obj_to_create_summary_tables,
+                  obj_to_save_csv,
+                  on_start_program,
+                  on_stop_program
+                  ):
+        """."""
+        ex = GUI(obj_to_game_type_management, obj_to_webcam_management, obj_to_management_google_spreadsheets,
+                 obj_to_storage_results, obj_to_get_licenses, obj_to_looking_for_player_tables,
+                 obj_to_create_summary_tables, obj_to_save_csv,
+                 on_start_program, on_stop_program)
+        ex.show()
+        self.__splash_screen.finish(ex)
+        sys.exit(self.__app.exec_())

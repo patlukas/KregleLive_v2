@@ -77,9 +77,12 @@ class StartProgram:
         __list_until_when_the_interruption_in_reading_the_player_score - lista z czasami kiedy mają być sprawdzane
                                                                          rezultaty graczy
         """
+        self.__management_gui: gui.ManagementGUI = gui.ManagementGUI()
+        self.__management_gui.show_splash_screen()
         Informing().clear_log_file()
+
         self.__obj_to_reading_number_from_cell = reading_numbers_from_cell.ReadingNumbersFromCell(
-            "templates", "unrecognized_sign", "unrecognized_cell", 0.95, 0.9, 0.75
+            "templates", "unrecognized/unrecognized_sign", "unrecognized/unrecognized_cell", 0.95, 0.9, 0.75
         )
         self.__obj_to_reading_data_from_image = reading_data_from_image.ReadingDataFromImage(
             self.__obj_to_reading_number_from_cell, 0, 3, 12
@@ -110,7 +113,7 @@ class StartProgram:
         self.__obj_to_save_data_to_csv_file = results_to_csv_file.ResultsToCsvFile(self.__obj_to_storages_results)
         self.__list_until_when_the_interruption_in_reading_the_player_score: list[float] = []
         self.__run = False
-        gui.start_gui(
+        self.__management_gui.start_gui(
             self.__obj_to_game_type_management,
             self.__obj_to_webcam_management,
             self.__obj_to_management_google_spreadsheets,

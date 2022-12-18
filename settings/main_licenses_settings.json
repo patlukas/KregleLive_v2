@@ -4,9 +4,9 @@
     "team_column": 4,
     "name_column": 3,
     "category_column": 5,
-    "valid_license_column": 8,
-    "where_loaned_column": 9,
-    "loan_for_what_column": 10,
+    "valid_license_column": 9,
+    "where_loaned_column": 10,
+    "loan_for_what_column": 11,
     "license_is_valid_when_there_is_text": ["TAK"]
   }
 }

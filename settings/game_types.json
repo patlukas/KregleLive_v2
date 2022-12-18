@@ -17,7 +17,7 @@
     "number_of_player_in_team": 4,
     "number_of_changes": 1,
     "affiliation_of_players_to_teams": [0, 0, -1, 0, 0, -1, 1, 1, -1, 1, 1, -1],
-    "list_category": ["Junior", "Junior Młodszy", "Juniorka", "Juniorka Młodsza"],
+    "list_category": ["Junior", "Junior młodszy", "Juniorka", "Juniorka młodsza"],
     "name_of_game": "centralna liga juniorow",
     "tables_for_results": "tables_for_results/four_player_league.json",
     "tables_for_lane_results": "tables_for_results/lane_table_settings.json",
